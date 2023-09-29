@@ -8,6 +8,8 @@ public class Player : Entity
     public PlayerStateMachine PlayerStateMachine { get; private set; }
     public PlayerIdleState IdleState { get; private set; }
     public PlayerMoveState MoveState { get; private set; }
+    public PlayerEncounterState EncounterState { get; private set; }
+    public PlayerInBattleState InBattleState { get; private set; }
     #endregion
 
     #region Data References
