@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Unit : Character
 {
@@ -8,15 +10,8 @@ public class Unit : Character
     public UnitData unitData;
     #endregion
 
-    #region Stats References
-    public string CharacterName { get; private set; }
-    public int HealthPoint { get; private set; }
-    public int Energy { get; private set; }
-    public int Attack { get; private set; }
-    public int Defense { get; private set; }
-    public int Speed { get; private set; }
-    public float CritRate { get; private set; }
-    public int Constant { get; private set; }
+    #region Unit UI References
+    public TextMeshProUGUI unitName, unitHealthPoint, unitEnergyPoint, unitHealthPointStat, unitAtkStat, unitDefStat, unitSpdStat, unitCritStat;
     #endregion
 
     public override IEnumerator Action()
@@ -29,19 +24,31 @@ public class Unit : Character
 
     public override void Initialize()
     {
+        GetComponent<Image>().sprite = unitData.RightSprite;
         CharacterName = unitData.CharacterName;
-        HealthPoint = unitData.HealthPoint;
-        Energy = unitData.Energy;
+        MaxHealthPoint = unitData.HealthPoint;
+        CurrentHealthPoint = MaxHealthPoint;
+        MaxEnergy = unitData.Energy;
+        CurrentEnergy = MaxEnergy;
         Attack = unitData.Attack;
         Defense = unitData.Defense;
         Speed = unitData.Speed;
         CritRate = unitData.CritRate;
         Constant = unitData.Constant;
+
+        unitName.text = CharacterName;
+        unitHealthPoint.text = $"{CurrentHealthPoint}/{MaxHealthPoint}";
+        unitEnergyPoint.text = $"{CurrentEnergy}/{MaxEnergy}";
+        unitHealthPointStat.text = $"HP: {MaxHealthPoint}";
+        unitAtkStat.text = $"ATK: {Attack}";
+        unitDefStat.text = $"DEF: {Defense}";
+        unitSpdStat.text = $"SPD: {Speed}";
+        unitCritStat.text = $"CRIT: {CritRate}";
     }
 
     public override bool IsDead()
     {
-        if (HealthPoint <= 0)
+        if (CurrentHealthPoint <= 0)
             return true;
         return false;
     }
@@ -49,6 +56,6 @@ public class Unit : Character
     public override void TakeDamageFrom(int damage)
     {
         int damageTaken = damage * (1 - (Defense / Defense + Constant));
-        HealthPoint -= damageTaken;
+        CurrentHealthPoint -= damageTaken;
     }
 }

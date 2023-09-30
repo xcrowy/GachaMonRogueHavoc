@@ -35,4 +35,9 @@ public abstract class Entity : MonoBehaviour
     {
         
     }
+
+    protected virtual void OnTriggerStay2D(Collider2D collision)
+    {
+        
+    }
 }

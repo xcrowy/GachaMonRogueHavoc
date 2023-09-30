@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Enemy : Character
 {
@@ -8,14 +10,8 @@ public class Enemy : Character
     public EnemyData enemyData;
     #endregion
 
-    #region Stats References
-    public string CharacterName { get; private set; }
-    public int HealthPoint { get; private set; }
-    public int Attack { get; private set; }
-    public int Defense { get; private set; }
-    public int Speed { get; private set; }
-    public float CritRate { get; private set; }
-    public int Constant { get; private set; }
+    #region Enemy UI References
+    public TextMeshProUGUI enemyName, enemyHealthPoint;
     #endregion
 
     public override IEnumerator Action()
@@ -27,18 +23,23 @@ public class Enemy : Character
 
     public override void Initialize()
     {
+        GetComponent<Image>().sprite = enemyData.LeftSprite;
         CharacterName = enemyData.CharacterName;
-        HealthPoint = enemyData.HealthPoint;
+        MaxHealthPoint = enemyData.HealthPoint;
+        CurrentHealthPoint = MaxHealthPoint;
         Attack = enemyData.Attack;
         Defense = enemyData.Defense;
         Speed = enemyData.Speed;
         CritRate = enemyData.CritRate;
         Constant = enemyData.Constant;
+
+        enemyName.text = CharacterName;
+        enemyHealthPoint.text = $"{CurrentHealthPoint}/{MaxHealthPoint}";
     }
 
     public override bool IsDead()
     {
-        if (HealthPoint <= 0)
+        if (CurrentHealthPoint <= 0)
             return true;
         return false;
     }
@@ -46,7 +47,7 @@ public class Enemy : Character
     public override void TakeDamageFrom(int damage)
     {
         int damageTaken = damage * (1 - (Defense / Defense + Constant));
-        HealthPoint -= damageTaken;
+        CurrentHealthPoint -= damageTaken;
     }
 
     public void AttackUnit()

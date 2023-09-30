@@ -11,6 +11,7 @@ public class PlayerEncounterState : PlayerGroundedState
     public override void DoChecks()
     {
         base.DoChecks();
+        player.InputHandler.UseInteractInput();
     }
 
     public override void Enter()

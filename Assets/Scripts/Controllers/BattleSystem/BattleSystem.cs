@@ -1,10 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class BattleSystem : MonoBehaviour
 {
+    #region Unit References
+    [Header("Unit")]
+    public VerticalLayoutGroup unitPosition; //TODO: Need this for spawning in units dynamically + dynamic positioning of UI
+    #endregion
+
+    #region Enemy References
+    [Header("Enemy")]
+    public VerticalLayoutGroup enemyPanel; //TODO: Dynamic positioning of UI
+    public VerticalLayoutGroup enemyPosition;
+    #endregion
+
+    [Header("Character List")]
+    //TODO: Add characters dynamically based on EnemyHost's Party + Player's Party
     public List<Character> characters = new();
+    //TODO: Consider Speed when adding it to the queue
     private Queue<Character> turnQueue = new();
     private Character currentCharacter;
 
@@ -66,6 +82,7 @@ public class BattleSystem : MonoBehaviour
         {
             print("You are the chosen one.");
         }
+        ///TODO: Disable Battle Interface
     }
 
     private bool IsAllPlayerUnitDead()

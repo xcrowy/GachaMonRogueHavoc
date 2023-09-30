@@ -31,6 +31,8 @@ public class Player : Entity
         PlayerStateMachine = new PlayerStateMachine();
         IdleState = new PlayerIdleState(this, PlayerStateMachine, playerData, "Idle");
         MoveState = new PlayerMoveState(this, PlayerStateMachine, playerData, "Move");
+        EncounterState = new PlayerEncounterState(this, PlayerStateMachine, playerData, "Idle");
+        InBattleState = new PlayerInBattleState(this, PlayerStateMachine, playerData, "Idle");
     }
 
     protected override void Start()
@@ -60,5 +62,11 @@ public class Player : Entity
         workspace.Set(x, y);
         RB.velocity = workspace;
         CurrentVelocity = workspace;
+    }
+
+    public int ReturnRaycastHit()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, workspace);
+        return hit.collider.gameObject.layer;
     }
 }
