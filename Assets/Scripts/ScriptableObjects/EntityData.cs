@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Entity Data", menuName = "Entity", order = 1)]
+[CreateAssetMenu(menuName = "Entity")]
 public class EntityData : ScriptableObject
 {
     

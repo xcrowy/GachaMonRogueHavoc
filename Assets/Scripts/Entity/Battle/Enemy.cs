@@ -10,10 +10,6 @@ public class Enemy : Character
     public EnemyData enemyData;
     #endregion
 
-    #region Enemy UI References
-    public TextMeshProUGUI enemyName, enemyHealthPoint;
-    #endregion
-
     public override IEnumerator Action()
     {
         // Implement enemy AI actions
@@ -23,7 +19,6 @@ public class Enemy : Character
 
     public override void Initialize()
     {
-        GetComponent<Image>().sprite = enemyData.LeftSprite;
         CharacterName = enemyData.CharacterName;
         MaxHealthPoint = enemyData.HealthPoint;
         CurrentHealthPoint = MaxHealthPoint;
@@ -32,9 +27,6 @@ public class Enemy : Character
         Speed = enemyData.Speed;
         CritRate = enemyData.CritRate;
         Constant = enemyData.Constant;
-
-        enemyName.text = CharacterName;
-        enemyHealthPoint.text = $"{CurrentHealthPoint}/{MaxHealthPoint}";
     }
 
     public override bool IsDead()

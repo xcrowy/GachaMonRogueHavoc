@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[CreateAssetMenu(menuName = "Entity/Character", order = 1)]
+[CreateAssetMenu(menuName = "Entity/Character")]
 public class CharacterData : EntityData
 {
     public Sprite UpSprite;

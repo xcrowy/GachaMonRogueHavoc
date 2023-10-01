@@ -10,8 +10,9 @@ public class Unit : Character
     public UnitData unitData;
     #endregion
 
-    #region Unit UI References
-    public TextMeshProUGUI unitName, unitHealthPoint, unitEnergyPoint, unitHealthPointStat, unitAtkStat, unitDefStat, unitSpdStat, unitCritStat;
+    #region Collection/Party References
+    public bool inCollection = false;
+    public bool inParty = false;
     #endregion
 
     public override IEnumerator Action()
@@ -24,7 +25,7 @@ public class Unit : Character
 
     public override void Initialize()
     {
-        GetComponent<Image>().sprite = unitData.RightSprite;
+        // Initializing Stats
         CharacterName = unitData.CharacterName;
         MaxHealthPoint = unitData.HealthPoint;
         CurrentHealthPoint = MaxHealthPoint;
@@ -35,15 +36,6 @@ public class Unit : Character
         Speed = unitData.Speed;
         CritRate = unitData.CritRate;
         Constant = unitData.Constant;
-
-        unitName.text = CharacterName;
-        unitHealthPoint.text = $"{CurrentHealthPoint}/{MaxHealthPoint}";
-        unitEnergyPoint.text = $"{CurrentEnergy}/{MaxEnergy}";
-        unitHealthPointStat.text = $"HP: {MaxHealthPoint}";
-        unitAtkStat.text = $"ATK: {Attack}";
-        unitDefStat.text = $"DEF: {Defense}";
-        unitSpdStat.text = $"SPD: {Speed}";
-        unitCritStat.text = $"CRIT: {CritRate}";
     }
 
     public override bool IsDead()

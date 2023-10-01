@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8559fd0ce54dbf1439d48a23f3608746, type: 3}
+  m_Name: Bob
+  m_EditorClassIdentifier: 
+  UpSprite: {fileID: 2102664023, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
+  DownSprite: {fileID: 1715956054, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
+  LeftSprite: {fileID: 2102623406, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
+  RightSprite: {fileID: 1938177790, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
+  CharacterName: Bob
+  HealthPoint: 150
+  Attack: 150
+  Defense: 150
+  Speed: 150
+  CritRate: 0.5
+  Constant: 100
+  Energy: 100

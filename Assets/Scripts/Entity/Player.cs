@@ -10,6 +10,7 @@ public class Player : Entity
     public PlayerMoveState MoveState { get; private set; }
     public PlayerEncounterState EncounterState { get; private set; }
     public PlayerInBattleState InBattleState { get; private set; }
+    public PlayerInCollectionState InCollectionState { get; private set; }
     #endregion
 
     #region Data References
@@ -33,6 +34,7 @@ public class Player : Entity
         MoveState = new PlayerMoveState(this, PlayerStateMachine, playerData, "Move");
         EncounterState = new PlayerEncounterState(this, PlayerStateMachine, playerData, "Idle");
         InBattleState = new PlayerInBattleState(this, PlayerStateMachine, playerData, "Idle");
+        InCollectionState = new PlayerInCollectionState(this, PlayerStateMachine, playerData, "Idle");
     }
 
     protected override void Start()

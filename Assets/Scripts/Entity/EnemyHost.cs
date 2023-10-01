@@ -21,6 +21,10 @@ public class EnemyHost : Entity
     [SerializeField] private List<string> dialogueLines = new();
     #endregion
 
+    #region Party System References
+    public List<Enemy> enemyPartyMembers = new();
+    #endregion
+
     protected override void OnTriggerStay2D(Collider2D collision)
     {
         if(collision.tag == "Player")
