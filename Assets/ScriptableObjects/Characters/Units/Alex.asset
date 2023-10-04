@@ -16,6 +16,7 @@ MonoBehaviour:
   DownSprite: {fileID: 437769340, guid: 7013f9a7e313eb540b96b757a314f27d, type: 3}
   LeftSprite: {fileID: -1703573219, guid: 7013f9a7e313eb540b96b757a314f27d, type: 3}
   RightSprite: {fileID: -1795805579, guid: 7013f9a7e313eb540b96b757a314f27d, type: 3}
+  Level: 1
   CharacterName: Alex
   HealthPoint: 100
   Attack: 200
@@ -24,3 +25,7 @@ MonoBehaviour:
   CritRate: 0.7
   Constant: 100
   Energy: 100
+  EnergyRegen: 20
+  learnableAbilities:
+  - abilityBase: {fileID: 11400000, guid: 364b1583519b0334ca9f60c55f327d12, type: 2}
+    level: 1

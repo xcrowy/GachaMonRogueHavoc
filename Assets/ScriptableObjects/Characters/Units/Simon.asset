@@ -16,6 +16,7 @@ MonoBehaviour:
   DownSprite: {fileID: 36764187, guid: fbf7cc3fbc6b4454185e506511222178, type: 3}
   LeftSprite: {fileID: -910031956, guid: fbf7cc3fbc6b4454185e506511222178, type: 3}
   RightSprite: {fileID: -1958851634, guid: fbf7cc3fbc6b4454185e506511222178, type: 3}
+  Level: 1
   CharacterName: Simon
   HealthPoint: 100
   Attack: 250
@@ -24,3 +25,4 @@ MonoBehaviour:
   CritRate: 0.5
   Constant: 100
   Energy: 100
+  learnableAbilities: []

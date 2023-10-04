@@ -10,6 +10,7 @@ public class CharacterData : EntityData
     public Sprite DownSprite;
     public Sprite LeftSprite;
     public Sprite RightSprite;
+    public int Level;
     public string CharacterName;
     public int HealthPoint;
     public int Attack;

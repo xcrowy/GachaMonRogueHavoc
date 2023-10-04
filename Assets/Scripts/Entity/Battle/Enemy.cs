@@ -19,14 +19,14 @@ public class Enemy : Character
 
     public override void Initialize()
     {
-        CharacterName = enemyData.CharacterName;
-        MaxHealthPoint = enemyData.HealthPoint;
-        CurrentHealthPoint = MaxHealthPoint;
-        Attack = enemyData.Attack;
-        Defense = enemyData.Defense;
-        Speed = enemyData.Speed;
-        CritRate = enemyData.CritRate;
-        Constant = enemyData.Constant;
+        SetCharacterName(enemyData.CharacterName);
+        SetMaxHealthPoint(enemyData.HealthPoint);
+        SetCurrentHealthPoint(enemyData.HealthPoint);
+        SetAttack(enemyData.Attack);
+        SetDefense(enemyData.Defense);
+        SetSpeed(enemyData.Speed);
+        SetCritRate(enemyData.CritRate);
+        SetConstant(enemyData.Constant);
     }
 
     public override bool IsDead()
@@ -38,8 +38,11 @@ public class Enemy : Character
 
     public override void TakeDamageFrom(int damage)
     {
-        int damageTaken = damage * (1 - (Defense / Defense + Constant));
-        CurrentHealthPoint -= damageTaken;
+        float constantDef = Defense + Constant;
+        float calculateDefense = Defense / constantDef;
+        
+        float damageTaken = damage * (1 - calculateDefense);
+        ModifyCurrentHealthPoint(-Mathf.RoundToInt(damageTaken));
     }
 
     public void AttackUnit()

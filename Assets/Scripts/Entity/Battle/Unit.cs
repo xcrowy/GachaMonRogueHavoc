@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Unit : Character
 {
@@ -15,27 +16,63 @@ public class Unit : Character
     public bool inParty = false;
     #endregion
 
-    public override IEnumerator Action()
-    {
-        //Implement Unit actions -> Use UI for Options like Attack/End Turn
-        //End with yield return new WaitForSeconds
-        print("Unit does this kind of action.");
-        yield return new WaitForSeconds(2f);
-    }
+    #region Getters/Setters
+    public bool ActionSelected { get; set; }
+    public BattleSystem BattleSystem { get; private set; }
+    public List<Ability> AbilitySet { get; private set; }
+    public Transform GetAbilities { get; private set; }
+    #endregion
 
     public override void Initialize()
     {
-        // Initializing Stats
-        CharacterName = unitData.CharacterName;
-        MaxHealthPoint = unitData.HealthPoint;
-        CurrentHealthPoint = MaxHealthPoint;
-        MaxEnergy = unitData.Energy;
-        CurrentEnergy = MaxEnergy;
-        Attack = unitData.Attack;
-        Defense = unitData.Defense;
-        Speed = unitData.Speed;
-        CritRate = unitData.CritRate;
-        Constant = unitData.Constant;
+        SetLevel(unitData.Level);
+        SetCharacterName(unitData.CharacterName);
+        SetMaxHealthPoint(unitData.HealthPoint);
+        SetCurrentHealthPoint(MaxHealthPoint);
+        SetMaxEnergy(unitData.Energy);
+        SetCurrentEnergy(unitData.Energy);
+        SetAttack(unitData.Attack);
+        SetDefense(unitData.Defense);
+        SetSpeed(unitData.Speed);
+        SetCritRate(unitData.CritRate);
+        SetConstant(unitData.Constant);
+
+        BattleSystem = FindObjectOfType<BattleSystem>();
+
+        // Set Attack and End Turn to non-interactable at the start of combat
+        BattleSystem.TogglePlayerChoiceButtonInteractability(false);
+        ActionSelected = false;
+
+        // Disable Event Trigger
+        BattleSystem.ToggleEventTrigger(false);
+
+        // Generate Abilities for Unit
+        AbilitySet = new();
+        foreach (LearnableAbility ability in unitData.LearnableAbilities)
+        {
+            if (ability.Level <= Level)
+                AbilitySet.Add(new Ability(ability.Base));
+
+            if (AbilitySet.Count >= 4)
+                break;
+        }
+        InitializeAbility();
+    }
+
+    private void InitializeAbility()
+    {
+        Transform abilityRef = BattleSystem.abilityPanel.transform.GetChild(0);
+
+        for (int i = 1; i < AbilitySet.Count; i++)
+            Instantiate(abilityRef, BattleSystem.abilityPanel.transform);
+
+        for (int i = 0; i < BattleSystem.abilityPanel.transform.childCount; i++)
+        {
+            GetAbilities = BattleSystem.abilityPanel.transform.GetChild(i);
+            GetAbilities.GetChild(0).GetComponent<TextMeshProUGUI>().text = AbilitySet[i].AbilityBase.abilityName;
+        }
+
+        //TODO: On Mouse Hover over ability button -> Display energy cost + description
     }
 
     public override bool IsDead()
@@ -47,7 +84,31 @@ public class Unit : Character
 
     public override void TakeDamageFrom(int damage)
     {
-        int damageTaken = damage * (1 - (Defense / Defense + Constant));
-        CurrentHealthPoint -= damageTaken;
+        float constantDef = Defense + Constant;
+        float calculateDefense = Defense / constantDef;
+
+        float damageTaken = damage * (1 - calculateDefense);
+        ModifyCurrentHealthPoint(-Mathf.RoundToInt(damageTaken));
+    }
+
+    public override IEnumerator Action()
+    {
+        BattleSystem.TogglePlayerChoiceButtonInteractability(true);
+
+        yield return WaitForPlayerAction();
+
+        BattleSystem.TogglePlayerChoiceButtonInteractability(false);
+
+        yield return new WaitForSeconds(2f);
+
+        ActionSelected = false;
+    }
+
+    private IEnumerator WaitForPlayerAction()
+    {
+        yield return new WaitForSeconds(1f);
+
+        while (!ActionSelected)
+            yield return null;
     }
 }

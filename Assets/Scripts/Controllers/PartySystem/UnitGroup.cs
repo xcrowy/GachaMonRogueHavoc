@@ -89,16 +89,15 @@ public class UnitGroup : MonoBehaviour
 
     private void SetUnitInfo(UnitData unitData, Unit unit)
     {
-        unit.CharacterName = unitData.CharacterName;
-        unit.MaxHealthPoint = unitData.HealthPoint;
-        unit.CurrentHealthPoint = unit.MaxHealthPoint;
-        unit.MaxEnergy = unitData.Energy;
-        unit.CurrentEnergy = unit.MaxEnergy;
-        unit.Attack = unitData.Attack;
-        unit.Defense = unitData.Defense;
-        unit.Speed = unitData.Speed;
-        unit.CritRate = unitData.CritRate;
-        unit.Constant = unitData.Constant;
+        unit.SetCharacterName(unitData.CharacterName);
+        unit.SetMaxHealthPoint(unitData.HealthPoint);
+        unit.SetCurrentHealthPoint(unit.MaxHealthPoint);
+        unit.SetMaxEnergy(unitData.Energy);
+        unit.SetCurrentEnergy(unit.MaxEnergy);
+        unit.SetAttack(unitData.Attack);
+        unit.SetDefense(unitData.Defense);
+        unit.SetSpeed(unitData.Speed);
+        unit.SetCritRate(unitData.CritRate);
     }
 
     private void SetUnitStatsInText(UnitData unitData, Transform unitInfo)

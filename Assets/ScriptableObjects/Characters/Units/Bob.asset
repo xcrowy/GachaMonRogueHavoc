@@ -16,6 +16,7 @@ MonoBehaviour:
   DownSprite: {fileID: 1715956054, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
   LeftSprite: {fileID: 2102623406, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
   RightSprite: {fileID: 1938177790, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
+  Level: 1
   CharacterName: Bob
   HealthPoint: 150
   Attack: 150
@@ -24,3 +25,7 @@ MonoBehaviour:
   CritRate: 0.5
   Constant: 100
   Energy: 100
+  EnergyRegen: 10
+  learnableAbilities:
+  - abilityBase: {fileID: 11400000, guid: 364b1583519b0334ca9f60c55f327d12, type: 2}
+    level: 1
