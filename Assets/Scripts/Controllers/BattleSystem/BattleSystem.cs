@@ -146,7 +146,6 @@ public class BattleSystem : MonoBehaviour
         unit.SetDefense(unit.unitData.Defense);
         unit.SetSpeed(unit.unitData.Speed);
         unit.SetCritRate(unit.unitData.CritRate);
-        unit.SetConstant(unit.unitData.Constant);
     }
 
     private void SetEnemyStats(Enemy enemy)
@@ -158,7 +157,6 @@ public class BattleSystem : MonoBehaviour
         enemy.SetDefense(enemy.enemyData.Defense);
         enemy.SetSpeed(enemy.enemyData.Speed);
         enemy.SetCritRate(enemy.enemyData.CritRate);
-        enemy.SetConstant(enemy.enemyData.Constant);
     }
 
     private void CheckForSingleUnitBattles()
@@ -377,7 +375,7 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-    private void OnEndTurn() //TODO
+    private void OnEndTurn()
     {
         print("End Turn");
     }
@@ -395,7 +393,7 @@ public class BattleSystem : MonoBehaviour
 
         int findSelectedAbility = AbilityPanel.transform.Find(SelectedAbility.name).GetSiblingIndex();
 
-        target.TakeDamageFrom(unit.Attack);
+        target.TakeDamageFrom(unit, unit.AbilitySet[findSelectedAbility].AbilityBase.damage);
 
         EnemyHealthPointSlider = enemyPanel.transform.GetChild(findSelectedTarget).GetChild(0).GetComponent<Slider>();
         UpdateEnemyStats(target, findSelectedTarget);

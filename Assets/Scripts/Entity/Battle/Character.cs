@@ -16,13 +16,15 @@ public abstract class Character : MonoBehaviour
     public int Defense { get; private set; }
     public int Speed { get; private set; }
     public float CritRate { get; private set; }
-    public int Constant { get; private set; }
     #endregion
 
+    #region Abstract
     public abstract IEnumerator Action();
     public abstract void Initialize();
-    public abstract void TakeDamageFrom(int damage);
+    public abstract void TakeDamageFrom(Character character, int damage);
+    public abstract float CalculateDamage(float baseDamage, float abilityDamage, float defense, float critMultiplier);
     public abstract bool IsDead();
+    #endregion
 
     #region Setters
     public void SetLevel(int val) => Level = val;
@@ -35,7 +37,6 @@ public abstract class Character : MonoBehaviour
     public void SetDefense(int val) => Defense = val;
     public void SetSpeed(int val) => Speed = val;
     public void SetCritRate(float val) => CritRate = val;
-    public void SetConstant(int val) => Constant = val;
     #endregion
 
     public void ModifyMaxHealthPoint(int val) => MaxHealthPoint += val;

@@ -35,7 +35,6 @@ public class Unit : Character
         SetDefense(unitData.Defense);
         SetSpeed(unitData.Speed);
         SetCritRate(unitData.CritRate);
-        SetConstant(unitData.Constant);
 
         BattleSystem = FindObjectOfType<BattleSystem>();
 
@@ -111,14 +110,12 @@ public class Unit : Character
         return false;
     }
 
-    public override void TakeDamageFrom(int damage)
+    public override void TakeDamageFrom(Character character, int abilityDamage)
     {
-        float constantDef = Defense + Constant;
-        float calculateDefense = Defense / constantDef;
+        float totalDamage = character.CalculateDamage(character.Attack, abilityDamage, Defense, character.CritRate);
+        print($"Total Damage: {totalDamage}");
 
-        float damageTaken = (Attack + damage) * (1 - calculateDefense);
-        print($"Damage Taken: {damageTaken}");
-        ModifyCurrentHealthPoint(-Mathf.RoundToInt(damageTaken));
+        ModifyCurrentHealthPoint(-Mathf.RoundToInt(totalDamage));
     }
 
     public override IEnumerator Action()
@@ -140,5 +137,17 @@ public class Unit : Character
 
         while (!ActionSelected)
             yield return null;
+    }
+
+    public override float CalculateDamage(float baseDamage, float abilityDamage, float defense, float critRate)
+    {
+        float calculatedDefense = defense / 100f >= 1 ? ((defense / 100f) - 1f) : (1f - (defense / 100f));
+        float totalDamage = (baseDamage + abilityDamage) * calculatedDefense;
+
+        totalDamage *= Random.Range(0f, 1f) < critRate ? 2f : 1f;
+
+        totalDamage = Mathf.Max(totalDamage, 0);
+
+        return totalDamage;
     }
 }

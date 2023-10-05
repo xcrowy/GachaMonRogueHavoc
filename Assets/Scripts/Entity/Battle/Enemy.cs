@@ -26,7 +26,6 @@ public class Enemy : Character
         SetDefense(enemyData.Defense);
         SetSpeed(enemyData.Speed);
         SetCritRate(enemyData.CritRate);
-        SetConstant(enemyData.Constant);
     }
 
     public override bool IsDead()
@@ -36,13 +35,25 @@ public class Enemy : Character
         return false;
     }
 
-    public override void TakeDamageFrom(int damage)
+    public override void TakeDamageFrom(Character character, int abilityDamage)
     {
-        float constantDef = Defense + Constant;
-        float calculateDefense = Defense / constantDef;
-        
-        float damageTaken = (Attack + damage) * (1 - calculateDefense);
-        ModifyCurrentHealthPoint(-Mathf.RoundToInt(damageTaken));
+        float totalDamage = CalculateDamage(character.Attack, abilityDamage, Defense, character.CritRate);
+        print($"Total Damage: {totalDamage}");
+
+        ModifyCurrentHealthPoint(-Mathf.RoundToInt(totalDamage));
+    
+    }
+
+    public override float CalculateDamage(float baseDamage, float abilityDamage, float defense, float critRate)
+    {
+        float calculatedDefense = defense / 100f >= 1 ? ((defense / 100f) - 1f) : (1f - (defense / 100f));
+        float totalDamage = (baseDamage + abilityDamage) * calculatedDefense;
+
+        totalDamage *= Random.Range(0f, 1f) < critRate ? 2f : 1f;
+
+        totalDamage = Mathf.Max(totalDamage, 0);
+
+        return totalDamage;
     }
 
     public void AttackUnit()
@@ -50,5 +61,6 @@ public class Enemy : Character
         // Implement enemy attack logic
         print("Enemy does this action");
     }
+
 
 }

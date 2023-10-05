@@ -17,5 +17,4 @@ public class CharacterData : EntityData
     public int Defense;
     public int Speed;
     public float CritRate;
-    public int Constant;
 }

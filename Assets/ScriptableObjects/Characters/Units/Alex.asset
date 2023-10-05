@@ -19,11 +19,10 @@ MonoBehaviour:
   Level: 1
   CharacterName: Alex
   HealthPoint: 100
-  Attack: 5
+  Attack: 50
   Defense: 100
   Speed: 200
   CritRate: 0.7
-  Constant: 100
   Energy: 100
   EnergyRegen: 20
   learnableAbilities:
