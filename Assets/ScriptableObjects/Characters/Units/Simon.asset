@@ -19,10 +19,13 @@ MonoBehaviour:
   Level: 1
   CharacterName: Simon
   HealthPoint: 100
-  Attack: 250
+  Attack: 2
   Defense: 135
   Speed: 170
   CritRate: 0.5
   Constant: 100
   Energy: 100
-  learnableAbilities: []
+  EnergyRegen: 20
+  learnableAbilities:
+  - abilityBase: {fileID: 11400000, guid: 4d62ed000a29c214ea20c46cf3065f7c, type: 2}
+    level: 1

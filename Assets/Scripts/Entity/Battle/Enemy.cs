@@ -41,7 +41,7 @@ public class Enemy : Character
         float constantDef = Defense + Constant;
         float calculateDefense = Defense / constantDef;
         
-        float damageTaken = damage * (1 - calculateDefense);
+        float damageTaken = (Attack + damage) * (1 - calculateDefense);
         ModifyCurrentHealthPoint(-Mathf.RoundToInt(damageTaken));
     }
 

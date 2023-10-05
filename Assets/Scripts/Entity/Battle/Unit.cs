@@ -44,7 +44,7 @@ public class Unit : Character
         ActionSelected = false;
 
         // Disable Event Trigger
-        BattleSystem.ToggleEventTrigger(false);
+        BattleSystem.ToggleEventTriggerForTargetSelection(false);
 
         // Generate Abilities for Unit
         AbilitySet = new();
@@ -56,23 +56,52 @@ public class Unit : Character
             if (AbilitySet.Count >= 4)
                 break;
         }
+
         InitializeAbility();
     }
 
     private void InitializeAbility()
     {
-        Transform abilityRef = BattleSystem.abilityPanel.transform.GetChild(0);
-
-        for (int i = 1; i < AbilitySet.Count; i++)
-            Instantiate(abilityRef, BattleSystem.abilityPanel.transform);
-
-        for (int i = 0; i < BattleSystem.abilityPanel.transform.childCount; i++)
+        if(this.CharacterName == BattleSystem.PartyController.partyMembers[0].CharacterName)
         {
-            GetAbilities = BattleSystem.abilityPanel.transform.GetChild(i);
-            GetAbilities.GetChild(0).GetComponent<TextMeshProUGUI>().text = AbilitySet[i].AbilityBase.abilityName;
-        }
+            var presetAbilityPanel = BattleSystem.abilityPanelParent.GetChild(0);
+            var presetAbility = presetAbilityPanel.GetChild(0);
 
-        //TODO: On Mouse Hover over ability button -> Display energy cost + description
+            for (int i = 1; i < AbilitySet.Count; i++)
+                Instantiate(presetAbility, presetAbilityPanel);
+
+            for (int i = 0; i < presetAbilityPanel.childCount; i++)
+            {
+                GetAbilities = presetAbilityPanel.GetChild(i);
+                GetAbilities.GetComponent<Button>().onClick.AddListener(delegate { BattleSystem.OnSelectAbility(this); });
+                GetAbilities.GetChild(0).GetComponent<TextMeshProUGUI>().text = AbilitySet[i].AbilityBase.abilityName;
+                GetAbilities.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().text = AbilitySet[i].AbilityBase.description;
+            }
+        }
+        else
+        {
+            GameObject otherAbilityPanel = Instantiate(BattleSystem.abilityPanelParent.GetChild(0).gameObject, BattleSystem.abilityPanelParent);
+
+            for (int i = otherAbilityPanel.transform.childCount; i > AbilitySet.Count; i--)
+            {
+                Destroy(otherAbilityPanel.transform.GetChild(i - 1).gameObject);
+                otherAbilityPanel.transform.GetChild(i - 1).SetParent(null);
+            }
+
+            var ability = otherAbilityPanel.transform.GetChild(0);
+
+            for (int i = 1; i < AbilitySet.Count; i++)
+                Instantiate(ability, otherAbilityPanel.transform);
+
+
+            for (int i = 0; i < otherAbilityPanel.transform.childCount; i++)
+            {
+                GetAbilities = otherAbilityPanel.transform.GetChild(i);
+                GetAbilities.GetComponent<Button>().onClick.AddListener(delegate {  BattleSystem.OnSelectAbility(this); });
+                GetAbilities.GetChild(0).GetComponent<TextMeshProUGUI>().text = AbilitySet[i].AbilityBase.abilityName;
+                GetAbilities.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().text = AbilitySet[i].AbilityBase.description;
+            }
+        }
     }
 
     public override bool IsDead()
@@ -87,7 +116,8 @@ public class Unit : Character
         float constantDef = Defense + Constant;
         float calculateDefense = Defense / constantDef;
 
-        float damageTaken = damage * (1 - calculateDefense);
+        float damageTaken = (Attack + damage) * (1 - calculateDefense);
+        print($"Damage Taken: {damageTaken}");
         ModifyCurrentHealthPoint(-Mathf.RoundToInt(damageTaken));
     }
 

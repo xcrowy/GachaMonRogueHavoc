@@ -40,13 +40,14 @@ public class BattleSystem : MonoBehaviour
     public Slider UnitHealthPointSlider { get; private set; }
     public Slider UnitEnergySlider { get; private set; }
     public Slider EnemyHealthPointSlider { get; private set; }
+    public GameObject AbilityPanel { get; private set; }
     #endregion
 
     #region Battle UI References
     [Header("Battle Options")]
     public Button attackButton;
     public Button endButton;
-    public GameObject abilityPanel;
+    public Transform abilityPanelParent;
     #endregion
 
     private void Start()
@@ -97,10 +98,7 @@ public class BattleSystem : MonoBehaviour
             SelectTargetButtons.Add(enemyPosition.transform.GetChild(i).GetComponent<Button>());
     }
 
-    private void InitializeHealthPoints()
-    {
-        UnitHealthPointSlider = unitPanel.GetChild(2).GetComponent<Slider>();
-    }
+    private void InitializeHealthPoints() => UnitHealthPointSlider = unitPanel.GetChild(2).GetComponent<Slider>();
 
     private void InitializeEnergy() => UnitEnergySlider = unitPanel.GetChild(3).GetComponent<Slider>();
 
@@ -296,8 +294,6 @@ public class BattleSystem : MonoBehaviour
                 UpdateUnitStats(unitCharacter);
                 for (int i = 0; i < SelectTargetButtons.Count; i++)
                     SelectTargetButtons[i].onClick.AddListener(delegate { OnSelectTarget(unitCharacter); });
-
-                unitCharacter.GetAbilities.GetComponent<Button>().onClick.AddListener(delegate { OnSelectAbility(unitCharacter); });
             }
                 
             yield return currentCharacter.Action();
@@ -310,7 +306,6 @@ public class BattleSystem : MonoBehaviour
             {
                 for (int i = 0; i < SelectTargetButtons.Count; i++)
                     SelectTargetButtons[i].onClick.RemoveAllListeners();
-                currentCharacter.GetComponent<Unit>().GetAbilities.GetComponent<Button>().onClick.RemoveAllListeners();
             }
         }
 
@@ -367,7 +362,19 @@ public class BattleSystem : MonoBehaviour
     private void OnAttack()
     {
         print("On Attack");
-        abilityPanel.SetActive(true);
+
+        for (int i = 0; i < PartyController.partyMembers.Count; i++)
+        {
+            if(currentCharacter.GetComponent<Unit>() == PartyController.partyMembers[i])
+            {
+                abilityPanelParent.GetChild(i).gameObject.SetActive(true);
+                AbilityPanel = abilityPanelParent.GetChild(i).gameObject;
+            }
+            else
+            {
+                abilityPanelParent.GetChild(i).gameObject.SetActive(false);
+            }
+        }
     }
 
     private void OnEndTurn() //TODO
@@ -379,14 +386,14 @@ public class BattleSystem : MonoBehaviour
     {
         print("Pick a target");
         int findSelectedTarget = enemyPosition.transform.Find(SelectedTarget.name).GetSiblingIndex();
-        ToggleEventTrigger(false);
+        ToggleEventTriggerForTargetSelection(false);
 
         GameObject targetIcon = enemyPosition.transform.GetChild(findSelectedTarget).GetChild(0).gameObject;
         targetIcon.SetActive(!targetIcon);
 
         Enemy target = enemyPosition.transform.GetChild(findSelectedTarget).GetComponent<Enemy>();
 
-        int findSelectedAbility = abilityPanel.transform.Find(SelectedAbility.name).GetSiblingIndex();
+        int findSelectedAbility = AbilityPanel.transform.Find(SelectedAbility.name).GetSiblingIndex();
 
         target.TakeDamageFrom(unit.Attack);
 
@@ -401,18 +408,21 @@ public class BattleSystem : MonoBehaviour
         print($"{unit.CharacterName} attacked {target.CharacterName}. Current Target HP: {target.CurrentHealthPoint}. Damage Taken: {target.MaxHealthPoint - target.CurrentHealthPoint}.");
         unit.ActionSelected = true;
 
+        attackButton.interactable = true;
+
         UpdateUnitStats(unit);
     }
 
     public void OnSelectAbility(Unit unit)
     {
-        int findSelectedAbility = abilityPanel.transform.Find(SelectedAbility.name).GetSiblingIndex();
+        int findSelectedAbility = AbilityPanel.transform.Find(SelectedAbility.name).GetSiblingIndex();
         print($"Ability Selected");
         
         if(unit.HasEnoughEnergy(unit, findSelectedAbility))
         {
             ToggleAbilityPanel(false);
-            ToggleEventTrigger(true);
+            attackButton.interactable = false;
+            ToggleEventTriggerForTargetSelection(true);
         }
         else
         {
@@ -429,7 +439,7 @@ public class BattleSystem : MonoBehaviour
         endButton.interactable = isOn;
     }
 
-    public void ToggleEventTrigger(bool isOn)
+    public void ToggleEventTriggerForTargetSelection(bool isOn)
     {
         for (int i = 0; i < enemyPosition.transform.childCount; i++)
         {
@@ -441,7 +451,7 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-    private void ToggleAbilityPanel(bool isOn) => abilityPanel.SetActive(isOn);
+    private void ToggleAbilityPanel(bool isOn) => AbilityPanel.SetActive(isOn);
 
     #endregion
 }

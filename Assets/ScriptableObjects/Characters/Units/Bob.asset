@@ -19,7 +19,7 @@ MonoBehaviour:
   Level: 1
   CharacterName: Bob
   HealthPoint: 150
-  Attack: 150
+  Attack: 5
   Defense: 150
   Speed: 150
   CritRate: 0.5
@@ -27,5 +27,5 @@ MonoBehaviour:
   Energy: 100
   EnergyRegen: 10
   learnableAbilities:
-  - abilityBase: {fileID: 11400000, guid: 364b1583519b0334ca9f60c55f327d12, type: 2}
+  - abilityBase: {fileID: 11400000, guid: a406091cf8736c044a5b9fe1dc5f1916, type: 2}
     level: 1

@@ -19,10 +19,13 @@ MonoBehaviour:
   Level: 1
   CharacterName: Lester
   HealthPoint: 300
-  Attack: 100
+  Attack: 3
   Defense: 250
   Speed: 100
   CritRate: 0.2
   Constant: 100
   Energy: 100
-  learnableAbilities: []
+  EnergyRegen: 20
+  learnableAbilities:
+  - abilityBase: {fileID: 11400000, guid: 7983275b74c07ae40ad1e2bb9df5c009, type: 2}
+    level: 1
