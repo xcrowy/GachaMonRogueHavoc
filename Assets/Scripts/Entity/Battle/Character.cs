@@ -50,13 +50,13 @@ public abstract class Character : MonoBehaviour
         if (CurrentHealthPoint > MaxHealthPoint)
             CurrentHealthPoint = MaxHealthPoint;
     }
-    public void ModifyEnergy(int val)
+    public void ModifyEnergy(Unit unit, int val)
     {
-        CurrentEnergy += val;
+        unit.CurrentEnergy += val;
 
-        if (CurrentEnergy > MaxEnergy)
-            CurrentEnergy = MaxEnergy;
+        if (unit.CurrentEnergy > MaxEnergy)
+            unit.CurrentEnergy = MaxEnergy;
     }
-    public bool HasEnoughEnergy(Unit unit, int index) => unit.CurrentEnergy >= unit.AbilitySet[index].EnergyUsage;
-    public bool HasMaxEnergy() => CurrentEnergy >= MaxEnergy;
+    public bool HasEnoughEnergy(Unit unit, Unit unitRef, int index) => unit.CurrentEnergy >= unitRef.AbilitySet[index].EnergyUsage;
+    public bool HasMaxEnergy(Unit unit) => unit.CurrentEnergy >= unit.MaxEnergy;
 }

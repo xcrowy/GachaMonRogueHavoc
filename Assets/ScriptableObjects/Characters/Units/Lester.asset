@@ -18,12 +18,11 @@ MonoBehaviour:
   RightSprite: {fileID: 596437446, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
   Level: 1
   CharacterName: Lester
-  HealthPoint: 300
+  HealthPoint: 10
   Attack: 3
   Defense: 250
   Speed: 100
   CritRate: 0.2
-  Constant: 100
   Energy: 100
   EnergyRegen: 20
   learnableAbilities:

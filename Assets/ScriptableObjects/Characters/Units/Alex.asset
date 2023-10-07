@@ -18,9 +18,9 @@ MonoBehaviour:
   RightSprite: {fileID: -1795805579, guid: 7013f9a7e313eb540b96b757a314f27d, type: 3}
   Level: 1
   CharacterName: Alex
-  HealthPoint: 100
-  Attack: 50
-  Defense: 100
+  HealthPoint: 50
+  Attack: 5
+  Defense: 150
   Speed: 200
   CritRate: 0.7
   Energy: 100

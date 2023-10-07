@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Punch
   description: A short punch
-  damage: 50
+  damage: 1
   energy: 70

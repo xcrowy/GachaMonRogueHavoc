@@ -16,10 +16,13 @@ MonoBehaviour:
   DownSprite: {fileID: 1660114445, guid: 89fd87ecb545ae04aaf8fdd86cfc6086, type: 3}
   LeftSprite: {fileID: 548557635, guid: 89fd87ecb545ae04aaf8fdd86cfc6086, type: 3}
   RightSprite: {fileID: 833348516, guid: 89fd87ecb545ae04aaf8fdd86cfc6086, type: 3}
+  Level: 1
   CharacterName: Bunny Girl Senpai
-  HealthPoint: 150
-  Attack: 250
+  HealthPoint: 15
+  Attack: 5
   Defense: 150
   Speed: 150
   CritRate: 0.5
-  Constant: 100
+  learnableAbilities:
+  - abilityBase: {fileID: 11400000, guid: ba685cec54460384684142caca228eae, type: 2}
+    level: 1

@@ -31,6 +31,7 @@ public class BattleSystem : MonoBehaviour
     #endregion
 
     #region Getters/Setters
+    public Player Player { get; private set; }
     public List<Character> Characters { get; private set; }
     public PartyController PartyController { get; private set; }
     public EnemyHost EnemyPartyController { get; private set; }
@@ -55,6 +56,7 @@ public class BattleSystem : MonoBehaviour
         Characters = new();
         PartyController = FindObjectOfType<PartyController>();
         EnemyPartyController = FindObjectOfType<EnemyHost>();
+        Player = FindObjectOfType<Player>();
 
         SelectTargetButtons = new();
         attackButton.onClick.AddListener(OnAttack);
@@ -102,7 +104,7 @@ public class BattleSystem : MonoBehaviour
 
     private void InitializeEnergy() => UnitEnergySlider = unitPanel.GetChild(3).GetComponent<Slider>();
 
-    private void UpdateUnitStats(Unit unit)
+    public void UpdateUnitStats(Unit unit)
     {
         unitLevel.text = $"Lv. {unit.Level}";
         unitName.text = unit.CharacterName;
@@ -118,7 +120,7 @@ public class BattleSystem : MonoBehaviour
         UnitEnergySlider.value = (float) unit.CurrentEnergy / (float) unit.MaxEnergy;
     }
 
-    private void UpdateEnemyStats(Enemy enemy, int index)
+    public void UpdateEnemyStats(Enemy enemy, int index)
     {
         TextMeshProUGUI enemyName = enemyPanel.transform.GetChild(index).GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI enemyHp = enemyPanel.transform.GetChild(index).GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
@@ -280,22 +282,24 @@ public class BattleSystem : MonoBehaviour
         while (!IsBattleOver())
         {
             currentCharacter = turnQueue.Dequeue();
+
             Debug.Log($"{currentCharacter.CharacterName}'s turn.");
 
             if (currentCharacter is Unit)
             {
-                Unit unitCharacter = currentCharacter.GetComponent<Unit>();
+                Unit unitCharacter = SetCurrentUnit();
+                Unit unitRef = currentCharacter.GetComponent<Unit>();
 
-                if (!unitCharacter.HasMaxEnergy())
-                    unitCharacter.ModifyEnergy(unitCharacter.unitData.EnergyRegen);
+                if (!unitCharacter.HasMaxEnergy(unitCharacter))
+                    unitCharacter.ModifyEnergy(unitCharacter, unitCharacter.unitData.EnergyRegen);
 
                 UpdateUnitStats(unitCharacter);
                 for (int i = 0; i < SelectTargetButtons.Count; i++)
-                    SelectTargetButtons[i].onClick.AddListener(delegate { OnSelectTarget(unitCharacter); });
+                    SelectTargetButtons[i].onClick.AddListener(delegate { OnSelectTarget(unitCharacter, unitRef); });
             }
-                
+
             yield return currentCharacter.Action();
-            
+
             turnQueue.Enqueue(currentCharacter);
             
             yield return new WaitForSeconds(2f);
@@ -313,14 +317,14 @@ public class BattleSystem : MonoBehaviour
 
     private bool IsAllPlayerUnitDead()
     {
-        foreach (var character in Characters)
+        if(unitPosition.transform.childCount > 0)
         {
-            if (character is Unit && !character.IsDead())
-                return false;
-            else
-                return true;
+            return false;
         }
-        return false;
+        else
+        {
+            return true;
+        }
     }
 
     private bool IsBattleOver()
@@ -328,13 +332,57 @@ public class BattleSystem : MonoBehaviour
         bool allEnemiesDefeated = true;
         bool allUnitsDefeated = true;
 
-        foreach (var character in Characters)
+        for (int i = 0; i < unitPosition.transform.childCount; i++)
         {
-            if (character is Enemy && !character.IsDead())
-                allEnemiesDefeated = false;
-
-            else if (character is Unit && !character.IsDead())
+            Unit currentUnit = unitPosition.transform.GetChild(i).GetComponent<Unit>();
+            if (!currentUnit.IsDead())
+            {
                 allUnitsDefeated = false;
+            }
+            else
+            {
+                //TODO: remove unit from party if dead
+                PartyController.partyMembers.RemoveAll(x => x.CharacterName == currentUnit.CharacterName);
+                turnQueue = new Queue<Character>(turnQueue.Where(x => x.CharacterName != currentUnit.CharacterName));
+                currentUnit.transform.SetParent(null);
+                Destroy(currentUnit.gameObject);
+                UpdateUnitLayoutGrid();
+
+                if (unitPosition.transform.childCount > 0)
+                {
+                    allUnitsDefeated = false;
+                }
+                else
+                {
+                    allUnitsDefeated = true;
+                }
+            }
+        }
+
+        for (int i = 0; i < enemyPosition.transform.childCount; i++)
+        {
+            Enemy currentEnemy = enemyPosition.transform.GetChild(i).GetComponent<Enemy>();
+            if (!currentEnemy.IsDead())
+            {
+                allEnemiesDefeated = false;
+            }
+            else
+            {
+                turnQueue = new Queue<Character>(turnQueue.Where(x => x.CharacterName != currentEnemy.CharacterName));
+                currentEnemy.transform.SetParent(null);
+                Destroy(currentEnemy.gameObject);
+                Destroy(enemyPanel.transform.GetChild(i).gameObject);
+                UpdateEnemyLayoutGrid();
+
+                if (enemyPosition.transform.childCount > 0)
+                {
+                    allEnemiesDefeated = false;
+                }
+                else
+                {
+                    allEnemiesDefeated = true;
+                }
+            }
         }
         return allEnemiesDefeated || allUnitsDefeated;
     }
@@ -343,18 +391,71 @@ public class BattleSystem : MonoBehaviour
     {
         if (IsAllPlayerUnitDead())
         {
-            print("All Units are Dead. You suck.");
+            print("Man, you kinda suck at this game!");
         }
         else
         {
             print("You are the chosen one.");
         }
-        ///TODO: Disable Battle Interface
+
+        this.transform.parent.gameObject.SetActive(false);
+        //TODO: wait til enemy or unit is gone and then set battle-screen to inactive
+
+        //TODO: make player back into Idle state again
+        Player.PlayerStateMachine.ChangeState(Player.IdleState);
     }
 
     public void OnSelectedTarget(Transform target) => SelectedTarget = target;
     public void OnSelectedAbility(Transform ability) => SelectedAbility = ability;
     private void RearrangeTurnBasedOnSpeed() => Characters.Sort((x, y) => y.Speed.CompareTo(x.Speed));
+    private Unit SetCurrentUnit()
+    {
+        for (int i = 0; i < unitPosition.transform.childCount; i++)
+        {
+            if (currentCharacter.GetComponent<Unit>().CharacterName == unitPosition.transform.GetChild(i).GetComponent<Unit>().CharacterName)
+            {
+                return unitPosition.transform.GetChild(i).GetComponent<Unit>();
+            }
+        }
+        return null;
+        
+    }
+    private void UpdateEnemyLayoutGrid()
+    {
+        switch (enemyPosition.transform.childCount)
+        {
+            case 1:
+                enemyPosition.padding.top = 300;
+                enemyPanel.padding.top = 120;
+                break;
+            case 2:
+                enemyPosition.padding.top = 220;
+                enemyPanel.padding.top = 70;
+                break;
+            case 3:
+            case 4:
+                enemyPosition.padding.top = 40;
+                enemyPanel.padding.top = 20;
+                break;
+        }
+    }
+    private void UpdateUnitLayoutGrid()
+    {
+        switch (unitPosition.transform.childCount)
+        {
+            case 1:
+                unitPosition.padding.top = 300;
+                break;
+            case 2:
+                unitPosition.padding.top = 220;
+                break;
+            case 3:
+            case 4:
+                unitPosition.padding.top = 40;
+                unitPosition.spacing = -350;
+                break;
+        }
+    }
 
     #region Button Event Listener
     private void OnAttack()
@@ -378,9 +479,14 @@ public class BattleSystem : MonoBehaviour
     private void OnEndTurn()
     {
         print("End Turn");
+        if(currentCharacter is Unit)
+        {
+            ToggleAbilityPanel(false);
+            currentCharacter.GetComponent<Unit>().ActionSelected = true;
+        }
     }
 
-    private void OnSelectTarget(Unit unit)
+    private void OnSelectTarget(Unit unit, Unit unitRef)
     {
         print("Pick a target");
         int findSelectedTarget = enemyPosition.transform.Find(SelectedTarget.name).GetSiblingIndex();
@@ -393,33 +499,37 @@ public class BattleSystem : MonoBehaviour
 
         int findSelectedAbility = AbilityPanel.transform.Find(SelectedAbility.name).GetSiblingIndex();
 
-        target.TakeDamageFrom(unit, unit.AbilitySet[findSelectedAbility].AbilityBase.damage);
+        target.TakeDamageFrom(unit, unitRef.AbilitySet[findSelectedAbility].AbilityBase.damage);
 
         EnemyHealthPointSlider = enemyPanel.transform.GetChild(findSelectedTarget).GetChild(0).GetComponent<Slider>();
         UpdateEnemyStats(target, findSelectedTarget);
 
-        print($"Ability Used: {unit.AbilitySet[findSelectedAbility].AbilityBase.abilityName}. Energy Cost: {unit.AbilitySet[findSelectedAbility].EnergyUsage}.");
-        unit.ModifyEnergy(-unit.AbilitySet[findSelectedAbility].EnergyUsage);
+        print($"Ability Used: {unitRef.AbilitySet[findSelectedAbility].AbilityBase.abilityName}. Energy Cost: {unitRef.AbilitySet[findSelectedAbility].EnergyUsage}.");
+        unit.ModifyEnergy(unit, -unitRef.AbilitySet[findSelectedAbility].EnergyUsage);
 
         print($"{unit.CharacterName}'s Energy: {unit.CurrentEnergy}.");
 
         print($"{unit.CharacterName} attacked {target.CharacterName}. Current Target HP: {target.CurrentHealthPoint}. Damage Taken: {target.MaxHealthPoint - target.CurrentHealthPoint}.");
-        unit.ActionSelected = true;
+        unitRef.ActionSelected = true;
 
         attackButton.interactable = true;
+        endButton.interactable = true;
 
         UpdateUnitStats(unit);
     }
 
-    public void OnSelectAbility(Unit unit)
+    public void OnSelectAbility()
     {
+        Unit unit = SetCurrentUnit();
+        Unit unitRef = currentCharacter.GetComponent<Unit>();
         int findSelectedAbility = AbilityPanel.transform.Find(SelectedAbility.name).GetSiblingIndex();
         print($"Ability Selected");
         
-        if(unit.HasEnoughEnergy(unit, findSelectedAbility))
+        if(unit.HasEnoughEnergy(unit, unitRef, findSelectedAbility))
         {
             ToggleAbilityPanel(false);
             attackButton.interactable = false;
+            endButton.interactable = false;
             ToggleEventTriggerForTargetSelection(true);
         }
         else

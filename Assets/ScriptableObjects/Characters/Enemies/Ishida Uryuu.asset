@@ -16,10 +16,15 @@ MonoBehaviour:
   DownSprite: {fileID: 630961877, guid: 8d24180679583f841ba53bf2813f98c1, type: 3}
   LeftSprite: {fileID: 84405265, guid: 8d24180679583f841ba53bf2813f98c1, type: 3}
   RightSprite: {fileID: -783980487, guid: 8d24180679583f841ba53bf2813f98c1, type: 3}
+  Level: 1
   CharacterName: Ishida Uryuu
-  HealthPoint: 200
-  Attack: 200
+  HealthPoint: 15
+  Attack: 5
   Defense: 150
   Speed: 250
   CritRate: 0.7
-  Constant: 100
+  learnableAbilities:
+  - abilityBase: {fileID: 11400000, guid: 7983275b74c07ae40ad1e2bb9df5c009, type: 2}
+    level: 1
+  - abilityBase: {fileID: 11400000, guid: ba685cec54460384684142caca228eae, type: 2}
+    level: 1

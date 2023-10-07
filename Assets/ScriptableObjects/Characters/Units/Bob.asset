@@ -18,14 +18,15 @@ MonoBehaviour:
   RightSprite: {fileID: 1938177790, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
   Level: 1
   CharacterName: Bob
-  HealthPoint: 150
+  HealthPoint: 1
   Attack: 5
-  Defense: 150
+  Defense: 100
   Speed: 150
   CritRate: 0.5
-  Constant: 100
   Energy: 100
   EnergyRegen: 10
   learnableAbilities:
   - abilityBase: {fileID: 11400000, guid: a406091cf8736c044a5b9fe1dc5f1916, type: 2}
+    level: 1
+  - abilityBase: {fileID: 11400000, guid: 364b1583519b0334ca9f60c55f327d12, type: 2}
     level: 1

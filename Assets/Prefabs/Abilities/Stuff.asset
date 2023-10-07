@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Stuff
   description: Stuffs himself
-  damage: 15
+  damage: 1
   energy: 20
