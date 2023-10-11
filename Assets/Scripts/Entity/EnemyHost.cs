@@ -54,6 +54,7 @@ public class EnemyHost : Entity
         dialogueController.SetDialogueLines(dialogueLines);
         dialogueController.SetPlayerInstance(Player);
         dialogueController.SetCharacterIcon(icon);
+        dialogueController.SetEnemyHost(this);
     }
 
 }

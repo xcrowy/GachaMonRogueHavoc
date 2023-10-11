@@ -32,6 +32,7 @@ public class BattleSystem : MonoBehaviour
 
     #region Getters/Setters
     public Player Player { get; private set; }
+    public EnemyHost EnemyHost { get; private set; }
     public List<Character> Characters { get; private set; }
     public PartyController PartyController { get; private set; }
     public EnemyHost EnemyPartyController { get; private set; }
@@ -50,6 +51,8 @@ public class BattleSystem : MonoBehaviour
     public Button endButton;
     public Transform abilityPanelParent;
     #endregion
+
+    public void Initialize(EnemyHost enemyHost) => this.EnemyHost = enemyHost;
 
     private void Start()
     {
@@ -397,10 +400,11 @@ public class BattleSystem : MonoBehaviour
             print("You are the chosen one.");
         }
 
-        this.transform.parent.gameObject.SetActive(false);
         //TODO: wait til enemy or unit is gone and then set battle-screen to inactive
 
-        //TODO: make player back into Idle state again
+
+        Destroy(EnemyHost.gameObject);
+        Destroy(this.gameObject);
         Player.PlayerStateMachine.ChangeState(Player.IdleState);
     }
 

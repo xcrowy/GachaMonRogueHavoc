@@ -39,6 +39,7 @@ public abstract class Character : MonoBehaviour
     public void SetCritRate(float val) => CritRate = val;
     #endregion
 
+    #region Modifiers
     public void ModifyMaxHealthPoint(int val) => MaxHealthPoint += val;
     public void ModifyCurrentHealthPoint(int val)
     {
@@ -59,4 +60,5 @@ public abstract class Character : MonoBehaviour
     }
     public bool HasEnoughEnergy(Unit unit, Unit unitRef, int index) => unit.CurrentEnergy >= unitRef.AbilitySet[index].EnergyUsage;
     public bool HasMaxEnergy(Unit unit) => unit.CurrentEnergy >= unit.MaxEnergy;
+    #endregion
 }

@@ -26,6 +26,10 @@ public class DialogueController : MonoBehaviour
     private Player player;
     #endregion
 
+    #region EnemyHost Reference
+    public EnemyHost enemyHost { get; private set; }
+    #endregion
+
     private void Start()
     {
         dialogueInterface.SetActive(true);
@@ -88,7 +92,9 @@ public class DialogueController : MonoBehaviour
     {
         dialogueInterface.SetActive(false);
         player.PlayerStateMachine.ChangeState(player.InBattleState);
-        battleInterface.SetActive(true);
+        GameObject battleSystemObject = Instantiate(battleInterface);
+        BattleSystem battleSystem = battleSystemObject.GetComponent<BattleSystem>();
+        battleSystem.Initialize(enemyHost);
     }
 
     private void CompleteText()
@@ -101,4 +107,5 @@ public class DialogueController : MonoBehaviour
     public void SetDialogueLines(List<string> lines) => dialogueLines = lines;
     public void SetPlayerInstance(Player player) => this.player = player;
     public void SetCharacterIcon(Sprite sprite) => characterIcon.sprite = sprite;
+    public void SetEnemyHost(EnemyHost enemyHost) => this.enemyHost = enemyHost;
 }

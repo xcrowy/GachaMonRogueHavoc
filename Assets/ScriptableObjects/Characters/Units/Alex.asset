@@ -19,7 +19,7 @@ MonoBehaviour:
   Level: 1
   CharacterName: Alex
   HealthPoint: 50
-  Attack: 5
+  Attack: 50
   Defense: 150
   Speed: 200
   CritRate: 0.7
