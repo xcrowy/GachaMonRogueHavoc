@@ -20,7 +20,7 @@ public abstract class Character : MonoBehaviour
 
     #region Abstract
     public abstract IEnumerator Action();
-    public abstract void Initialize();
+    public abstract void Initialize(BattleSystem battleSystem);
     public abstract void TakeDamageFrom(Character character, int damage);
     public abstract float CalculateDamage(float baseDamage, float abilityDamage, float defense, float critMultiplier);
     public abstract bool IsDead();

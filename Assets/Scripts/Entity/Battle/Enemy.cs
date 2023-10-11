@@ -26,7 +26,7 @@ public class Enemy : Character
         ActionSelected = false;
     }
 
-    public override void Initialize()
+    public override void Initialize(BattleSystem BattleSystem)
     {
         SetCharacterName(enemyData.CharacterName);
         SetLevel(enemyData.Level);
@@ -37,17 +37,24 @@ public class Enemy : Character
         SetSpeed(enemyData.Speed);
         SetCritRate(enemyData.CritRate);
 
-        BattleSystem = FindObjectOfType<BattleSystem>();
+        this.BattleSystem = BattleSystem;
 
         AbilitySet = new();
+        List<Ability> abilityCollection = new();
+
         foreach (LearnableAbility ability in enemyData.LearnableAbilities)
         {
-            // TODO: Randomize abilities to add into list if more than 4 abilities are the same learnable level
             if (ability.Level <= Level)
-                AbilitySet.Add(new Ability(ability.Base));
+            {
+                abilityCollection.Add(new Ability(ability.Base));
+            }
+        }
 
-            if (AbilitySet.Count >= 4)
-                break;
+        while (AbilitySet.Count < 4 && abilityCollection.Count > 0)
+        {
+            int randomAbility = Random.Range(0, abilityCollection.Count);
+            AbilitySet.Add(abilityCollection[randomAbility]);
+            abilityCollection.RemoveAt(randomAbility);
         }
     }
 
@@ -100,6 +107,8 @@ public class Enemy : Character
     {
         List<Unit> aliveUnits = new();
 
+        float randomChance = Random.Range(0f, 1f);
+
         for (int i = 0; i < BattleSystem.unitPosition.transform.childCount; i++)
         {
             Unit currentUnit = BattleSystem.unitPosition.transform.GetChild(i).GetComponent<Unit>();
@@ -113,10 +122,28 @@ public class Enemy : Character
             }
         }
 
-        aliveUnits.Sort((x, y) => y.Defense.CompareTo(x.Defense));
-        aliveUnits.Reverse();
+        if (randomChance < 0.5f) // 50% chance of hitting a random unit
+        {
+            aliveUnits.Sort((x, y) => y.Defense.CompareTo(x.Defense));
+            aliveUnits.Reverse();
 
-        return aliveUnits.FirstOrDefault();
+            return aliveUnits.FirstOrDefault();
+        }
+        else
+        {
+            int count = aliveUnits.Count;
+            int last = count - 1;
+
+            for (int i = 0; i < last; ++i)
+            {
+                int rng = Random.Range(i, count);
+                var tmp = aliveUnits[i];
+                aliveUnits[i] = aliveUnits[rng];
+                aliveUnits[rng] = tmp;
+            }
+
+            return aliveUnits.FirstOrDefault();
+        }
     }
 
     private Ability FindStrongestAbility()

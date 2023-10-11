@@ -24,7 +24,7 @@ public class Unit : Character
     public Transform GetAbilities { get; private set; }
     #endregion
 
-    public override void Initialize()
+    public override void Initialize(BattleSystem BattleSystem)
     {
         SetLevel(unitData.Level);
         SetCharacterName(unitData.CharacterName);
@@ -36,7 +36,7 @@ public class Unit : Character
         SetCritRate(unitData.CritRate);
         SetHealthPointAndEnergyIfExist();
 
-        BattleSystem = FindObjectOfType<BattleSystem>();
+        this.BattleSystem = BattleSystem;
 
         // Set Attack and End Turn to non-interactable at the start of combat
         BattleSystem.TogglePlayerChoiceButtonInteractability(false);

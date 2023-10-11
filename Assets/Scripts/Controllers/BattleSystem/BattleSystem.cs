@@ -83,7 +83,7 @@ public class BattleSystem : MonoBehaviour
         InitializeEnergy();
 
         foreach (Character character in Characters)
-            character.Initialize();
+            character.Initialize(this);
 
         RearrangeTurnBasedOnSpeed();
 
@@ -341,7 +341,6 @@ public class BattleSystem : MonoBehaviour
             }
             else
             {
-                //TODO: remove unit from party if dead
                 PartyController.partyMembers.RemoveAll(x => x.CharacterName == currentUnit.CharacterName);
                 turnQueue = new Queue<Character>(turnQueue.Where(x => x.CharacterName != currentUnit.CharacterName));
                 currentUnit.transform.SetParent(null);
@@ -462,6 +461,7 @@ public class BattleSystem : MonoBehaviour
     {
         print("On Attack");
 
+        abilityPanelParent.gameObject.SetActive(true);
         for (int i = 0; i < PartyController.partyMembers.Count; i++)
         {
             if(currentCharacter.GetComponent<Unit>() == PartyController.partyMembers[i])
