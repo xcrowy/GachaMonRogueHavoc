@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class EnemyHost : Entity
 {
@@ -17,7 +16,7 @@ public class EnemyHost : Entity
     #endregion
 
     #region Dialogue References
-    public DialogueController dialogueController;
+    public GameObject dialogueControllerPrefab;
     [SerializeField] private List<string> dialogueLines = new();
     #endregion
 
@@ -35,6 +34,7 @@ public class EnemyHost : Entity
             inputHandler = Player.GetComponent<PlayerInputHandler>();
             Player.SetVelocity(0f, 0f);
 
+            //TODO: Fix this -> after one enemyhost, it auto starts dialogue
             if (inputHandler.InteractInput)
             {
                 playerStateMachine.ChangeState(Player.EncounterState);
@@ -50,7 +50,8 @@ public class EnemyHost : Entity
 
     private void InitializeDialogueController()
     {
-        dialogueController.gameObject.SetActive(true);
+        GameObject dialogueControllerObject = Instantiate(dialogueControllerPrefab);
+        DialogueController dialogueController = dialogueControllerObject.GetComponent<DialogueController>();
         dialogueController.SetDialogueLines(dialogueLines);
         dialogueController.SetPlayerInstance(Player);
         dialogueController.SetCharacterIcon(icon);

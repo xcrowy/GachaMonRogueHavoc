@@ -58,7 +58,7 @@ public class BattleSystem : MonoBehaviour
     {
         Characters = new();
         PartyController = FindObjectOfType<PartyController>();
-        EnemyPartyController = FindObjectOfType<EnemyHost>();
+        EnemyPartyController = EnemyHost;
         Player = FindObjectOfType<Player>();
 
         SelectTargetButtons = new();
@@ -67,6 +67,10 @@ public class BattleSystem : MonoBehaviour
 
         BattleSetup();
         InitializeCharacters();
+
+        SetupUnitsInBattle();
+        SetupEnemiesInBattle();
+
         StartCoroutine(StartBattle());
     }
 
@@ -74,10 +78,6 @@ public class BattleSystem : MonoBehaviour
     {
         Characters.AddRange(PartyController.partyMembers);
         Characters.AddRange(EnemyPartyController.enemyPartyMembers);
-
-        CheckForSingleUnitBattles();
-        CheckForMultipleUnitInBattles();
-        CheckForMultipleEnemyInBattles();
     }
 
     private void InitializeCharacters()
@@ -94,13 +94,6 @@ public class BattleSystem : MonoBehaviour
             turnQueue.Enqueue(character);
 
         currentCharacter = turnQueue.Peek();
-        Character checkFirstUnit = turnQueue.FirstOrDefault(x => x.GetComponent<Unit>());
-
-        if (checkFirstUnit is Unit)
-            UpdateUnitStats((Unit)checkFirstUnit);
-
-        for (int i = 0; i < enemyPosition.transform.childCount; i++)
-            SelectTargetButtons.Add(enemyPosition.transform.GetChild(i).GetComponent<Button>());
     }
 
     private void InitializeHealthPoints() => UnitHealthPointSlider = unitPanel.GetChild(2).GetComponent<Slider>();
@@ -112,15 +105,18 @@ public class BattleSystem : MonoBehaviour
         unitLevel.text = $"Lv. {unit.Level}";
         unitName.text = unit.CharacterName;
         unitHealthPoint.text = $"{unit.CurrentHealthPoint}/{unit.MaxHealthPoint}";
-        unitEnergyPoint.text = $"{unit.CurrentEnergy}/{unit.MaxEnergy}";
+        UnitHealthPointSlider.value = (float)unit.CurrentHealthPoint / (float)unit.MaxHealthPoint;
         unitHealthPointStat.text = $"HP: {unit.MaxHealthPoint}";
         unitAtkStat.text = $"ATK: {unit.Attack}";
         unitDefStat.text = $"DEF: {unit.Defense}";
         unitSpdStat.text = $"SPD: {unit.Speed}";
         unitCritStat.text = $"CRIT: {unit.CritRate}";
+    }
 
-        UnitHealthPointSlider.value = (float) unit.CurrentHealthPoint / (float) unit.MaxHealthPoint;
-        UnitEnergySlider.value = (float) unit.CurrentEnergy / (float) unit.MaxEnergy;
+    public void UpdateUnitEnergy(Unit unit)
+    {
+        unitEnergyPoint.text = $"{unit.CurrentEnergy}/{unit.MaxEnergy}";
+        UnitEnergySlider.value = (float)unit.CurrentEnergy / (float)unit.MaxEnergy;
     }
 
     public void UpdateEnemyStats(Enemy enemy, int index)
@@ -164,7 +160,7 @@ public class BattleSystem : MonoBehaviour
         enemy.SetCritRate(enemy.enemyData.CritRate);
     }
 
-    private void CheckForSingleUnitBattles()
+    private void SetupUnitsInBattle()
     {
         if (PartyController.partyMembers.Count == 1)
         {
@@ -174,26 +170,11 @@ public class BattleSystem : MonoBehaviour
             getUnitRef.unitData = findUnit.GetComponent<Unit>().unitData;
 
             SetUnitStats(getUnitRef);
-
+            UpdateUnitStats(getUnitRef);
+            UpdateUnitEnergy(getUnitRef);
             InitializeUnitSprite(findUnit, unitSpriteRef);
         }
-
-        if (EnemyPartyController.enemyPartyMembers.Count == 1)
-        {
-            Enemy getEnemyRef = enemyPosition.transform.GetChild(0).GetComponent<Enemy>();
-            Image enemySpriteRef = enemyPosition.transform.GetChild(0).GetComponent<Image>();
-            Enemy findEnemy = (Enemy)Characters.Find(x => x.GetComponent<Enemy>());
-            getEnemyRef.enemyData = findEnemy.GetComponent<Enemy>().enemyData;
-
-            SetEnemyStats(getEnemyRef);
-
-            InitializeEnemySprite(findEnemy, enemySpriteRef);
-        }
-    }
-
-    private void CheckForMultipleUnitInBattles()
-    {
-        if (PartyController.partyMembers.Count > 1)
+        else
         {
             switch (PartyController.partyMembers.Count)
             {
@@ -211,6 +192,7 @@ public class BattleSystem : MonoBehaviour
             }
 
             Unit getUnitRef = unitPosition.transform.GetChild(0).GetComponent<Unit>();
+
             for (int i = 1; i < PartyController.partyMembers.Count; i++)
                 Instantiate(getUnitRef, unitPosition.transform);
 
@@ -227,13 +209,30 @@ public class BattleSystem : MonoBehaviour
                 }
             }
             for (int i = 0; i < unitPosition.transform.childCount; i++)
-                SetUnitStats(unitPosition.transform.GetChild(i).GetComponent<Unit>());
+            {
+                Unit unit = unitPosition.transform.GetChild(i).GetComponent<Unit>();
+                SetUnitStats(unit);
+                UpdateUnitStats(unit);
+                UpdateUnitEnergy(unit);
+            }
+                
         }
     }
 
-    private void CheckForMultipleEnemyInBattles()
+    private void SetupEnemiesInBattle()
     {
-        if (EnemyPartyController.enemyPartyMembers.Count > 1)
+        if (EnemyPartyController.enemyPartyMembers.Count == 1)
+        {
+            Enemy getEnemyRef = enemyPosition.transform.GetChild(0).GetComponent<Enemy>();
+            Image enemySpriteRef = enemyPosition.transform.GetChild(0).GetComponent<Image>();
+            Enemy findEnemy = (Enemy)Characters.Find(x => x.GetComponent<Enemy>());
+            getEnemyRef.enemyData = findEnemy.GetComponent<Enemy>().enemyData;
+
+            SetEnemyStats(getEnemyRef);
+            UpdateEnemyStats(getEnemyRef, 0);
+            InitializeEnemySprite(findEnemy, enemySpriteRef);
+        }
+        else
         {
             switch (EnemyPartyController.enemyPartyMembers.Count)
             {
@@ -254,7 +253,7 @@ public class BattleSystem : MonoBehaviour
 
             Enemy getEnemyRef = enemyPosition.transform.GetChild(0).GetComponent<Enemy>();
             GameObject getEnemyTextData = enemyPanel.transform.GetChild(0).gameObject;
-            
+
             for (int i = 1; i < EnemyPartyController.enemyPartyMembers.Count; i++)
             {
                 Instantiate(getEnemyRef, enemyPosition.transform);
@@ -271,17 +270,25 @@ public class BattleSystem : MonoBehaviour
                     Enemy enemy = findEnemy[j].GetComponent<Enemy>();
                     InitializeEnemySprite(enemy, enemySpriteRef);
                 }
-                UpdateEnemyStats(findEnemy[i].GetComponent<Enemy>(), i);
             }
 
             for (int i = 0; i < enemyPosition.transform.childCount; i++)
+            {
                 SetEnemyStats(enemyPosition.transform.GetChild(i).GetComponent<Enemy>());
+                UpdateEnemyStats(findEnemy[i].GetComponent<Enemy>(), i);
+            }
+                
         }
+
+        for (int i = 0; i < enemyPosition.transform.childCount; i++)
+            SelectTargetButtons.Add(enemyPosition.transform.GetChild(i).GetComponent<Button>());
     }
 
 
     private IEnumerator StartBattle()
     {
+        yield return new WaitForSeconds(1f);
+
         while (!IsBattleOver())
         {
             currentCharacter = turnQueue.Dequeue();
@@ -294,11 +301,15 @@ public class BattleSystem : MonoBehaviour
                 Unit unitRef = currentCharacter.GetComponent<Unit>();
 
                 if (!unitCharacter.HasMaxEnergy(unitCharacter))
+                {
                     unitCharacter.ModifyEnergy(unitCharacter, unitCharacter.unitData.EnergyRegen);
+                    UpdateUnitEnergy(unitCharacter);
+                }
 
-                UpdateUnitStats(unitCharacter);
                 for (int i = 0; i < SelectTargetButtons.Count; i++)
+                {
                     SelectTargetButtons[i].onClick.AddListener(delegate { OnSelectTarget(unitCharacter, unitRef); });
+                }
             }
 
             yield return currentCharacter.Action();
@@ -364,6 +375,7 @@ public class BattleSystem : MonoBehaviour
         for (int i = 0; i < enemyPosition.transform.childCount; i++)
         {
             Enemy currentEnemy = enemyPosition.transform.GetChild(i).GetComponent<Enemy>();
+
             if (!currentEnemy.IsDead())
             {
                 allEnemiesDefeated = false;
@@ -393,6 +405,7 @@ public class BattleSystem : MonoBehaviour
     {
         if (IsAllPlayerUnitDead())
         {
+            //TODO: all units are dead
             print("Man, you kinda suck at this game!");
         }
         else
@@ -400,8 +413,12 @@ public class BattleSystem : MonoBehaviour
             print("You are the chosen one.");
         }
 
-        //TODO: wait til enemy or unit is gone and then set battle-screen to inactive
+        StartCoroutine(DestroyLastEnemyAndChangeState());
+    }
 
+    private IEnumerator DestroyLastEnemyAndChangeState()
+    {
+        yield return new WaitForSeconds(2f);
 
         Destroy(EnemyHost.gameObject);
         Destroy(this.gameObject);
@@ -510,6 +527,7 @@ public class BattleSystem : MonoBehaviour
 
         print($"Ability Used: {unitRef.AbilitySet[findSelectedAbility].AbilityBase.abilityName}. Energy Cost: {unitRef.AbilitySet[findSelectedAbility].EnergyUsage}.");
         unit.ModifyEnergy(unit, -unitRef.AbilitySet[findSelectedAbility].EnergyUsage);
+        UpdateUnitEnergy(unit);
 
         print($"{unit.CharacterName}'s Energy: {unit.CurrentEnergy}.");
 
@@ -518,8 +536,6 @@ public class BattleSystem : MonoBehaviour
 
         attackButton.interactable = true;
         endButton.interactable = true;
-
-        UpdateUnitStats(unit);
     }
 
     public void OnSelectAbility()

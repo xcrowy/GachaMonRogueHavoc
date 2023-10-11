@@ -10,12 +10,10 @@ public class DialogueController : MonoBehaviour
 {
     #region Object References
     public GameObject battleInterface;
-    public GameObject dialogueInterface;
-    public Image characterIcon;
+    public GameObject dialogueCanvasPrefab;
     #endregion
 
     #region Dialogue References
-    public TextMeshProUGUI dialogueText;
     private List<string> dialogueLines;
     private int currentLineIndex = 0;
     private bool isDisplayingText = false;
@@ -26,13 +24,26 @@ public class DialogueController : MonoBehaviour
     private Player player;
     #endregion
 
-    #region EnemyHost Reference
-    public EnemyHost enemyHost { get; private set; }
+    #region Getters/Setters
+    public GameObject DialogueCanvas { get; private set; }
+    public Image CharacterIcon { get; private set; }
+    public Sprite CharacterIconReference { get; private set; }
+    public TextMeshProUGUI DialogueText { get; private set; }
+    public EnemyHost EnemyHost { get; private set; }
+    public EnemyHost EnemyHostReference { get; private set; }
     #endregion
 
     private void Start()
     {
-        dialogueInterface.SetActive(true);
+        DialogueCanvas = Instantiate(dialogueCanvasPrefab);
+        Transform dialogueInterface = DialogueCanvas.transform.GetChild(0);
+
+        CharacterIcon = dialogueInterface.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
+        CharacterIcon.sprite = CharacterIconReference;
+        DialogueText = dialogueInterface.GetChild(0).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
+
+        this.EnemyHost = EnemyHostReference;
+
         StartDialogue();
     }
 
@@ -57,7 +68,7 @@ public class DialogueController : MonoBehaviour
     {
         if(currentLineIndex < dialogueLines.Count)
         {
-            dialogueText.text = "";
+            DialogueText.text = "";
             StartCoroutine(TypeText(dialogueLines[currentLineIndex]));
         }
     }
@@ -67,7 +78,7 @@ public class DialogueController : MonoBehaviour
         isDisplayingText = true;
         foreach (char letter in text)
         {
-            dialogueText.text += letter;
+            DialogueText.text += letter;
             yield return new WaitForSeconds(textSpeed);
         }
         isDisplayingText = false;
@@ -90,22 +101,24 @@ public class DialogueController : MonoBehaviour
 
     private void EndDialogue()
     {
-        dialogueInterface.SetActive(false);
+        Destroy(DialogueCanvas);
         player.PlayerStateMachine.ChangeState(player.InBattleState);
         GameObject battleSystemObject = Instantiate(battleInterface);
         BattleSystem battleSystem = battleSystemObject.GetComponent<BattleSystem>();
-        battleSystem.Initialize(enemyHost);
+        battleSystem.Initialize(EnemyHost);
+
+        this.gameObject.SetActive(false);
     }
 
     private void CompleteText()
     {
-        dialogueText.text = dialogueLines[currentLineIndex];
+        DialogueText.text = dialogueLines[currentLineIndex];
         StopAllCoroutines();
         isDisplayingText = false;
     }
 
     public void SetDialogueLines(List<string> lines) => dialogueLines = lines;
     public void SetPlayerInstance(Player player) => this.player = player;
-    public void SetCharacterIcon(Sprite sprite) => characterIcon.sprite = sprite;
-    public void SetEnemyHost(EnemyHost enemyHost) => this.enemyHost = enemyHost;
+    public void SetCharacterIcon(Sprite sprite) => CharacterIconReference = sprite;
+    public void SetEnemyHost(EnemyHost enemyHost) => EnemyHostReference = enemyHost;
 }
