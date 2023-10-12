@@ -18,7 +18,7 @@ MonoBehaviour:
   RightSprite: {fileID: 1938177790, guid: cb97e95844de2bc4dbe595c50c136abc, type: 3}
   Level: 1
   CharacterName: Bob
-  HealthPoint: 100
+  HealthPoint: 5
   Attack: 5
   Defense: 100
   Speed: 150

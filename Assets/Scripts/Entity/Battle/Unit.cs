@@ -26,17 +26,18 @@ public class Unit : Character
 
     public override void Initialize(BattleSystem BattleSystem)
     {
+        this.BattleSystem = BattleSystem;
+
         SetLevel(unitData.Level);
         SetCharacterName(unitData.CharacterName);
         SetMaxHealthPoint(unitData.HealthPoint);
+        SetCurrentHealthPoint(unitData.HealthPoint);
         SetMaxEnergy(unitData.Energy);
+        SetCurrentEnergy(unitData.Energy);
         SetAttack(unitData.Attack);
         SetDefense(unitData.Defense);
         SetSpeed(unitData.Speed);
         SetCritRate(unitData.CritRate);
-        SetHealthPointAndEnergyIfExist();
-
-        this.BattleSystem = BattleSystem;
 
         // Set Attack and End Turn to non-interactable at the start of combat
         BattleSystem.TogglePlayerChoiceButtonInteractability(false);
@@ -160,26 +161,5 @@ public class Unit : Character
         totalDamage = Mathf.Max(totalDamage, 0);
 
         return totalDamage;
-    }
-
-    private void SetHealthPointAndEnergyIfExist()
-    {
-        if (CurrentHealthPoint != 0)
-        {
-            SetCurrentHealthPoint(CurrentHealthPoint);
-        }
-        else
-        {
-            SetCurrentHealthPoint(MaxHealthPoint);
-        }
-
-        if (CurrentEnergy != 0)
-        {
-            SetCurrentEnergy(CurrentEnergy);
-        }
-        else
-        {
-            SetCurrentEnergy(MaxEnergy);
-        }
     }
 }

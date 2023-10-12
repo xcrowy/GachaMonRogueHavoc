@@ -82,8 +82,8 @@ public class BattleSystem : MonoBehaviour
 
     private void InitializeCharacters()
     {
-        InitializeHealthPoints();
-        InitializeEnergy();
+        InitializeHealthPointsSlider();
+        InitializeEnergySlider();
 
         foreach (Character character in Characters)
             character.Initialize(this);
@@ -96,9 +96,9 @@ public class BattleSystem : MonoBehaviour
         currentCharacter = turnQueue.Peek();
     }
 
-    private void InitializeHealthPoints() => UnitHealthPointSlider = unitPanel.GetChild(2).GetComponent<Slider>();
+    private void InitializeHealthPointsSlider() => UnitHealthPointSlider = unitPanel.GetChild(2).GetComponent<Slider>();
 
-    private void InitializeEnergy() => UnitEnergySlider = unitPanel.GetChild(3).GetComponent<Slider>();
+    private void InitializeEnergySlider() => UnitEnergySlider = unitPanel.GetChild(3).GetComponent<Slider>();
 
     public void UpdateUnitStats(Unit unit)
     {
@@ -140,9 +140,9 @@ public class BattleSystem : MonoBehaviour
         unit.SetLevel(unit.unitData.Level);
         unit.SetCharacterName(unit.unitData.CharacterName);
         unit.SetMaxHealthPoint(unit.unitData.HealthPoint);
-        unit.SetCurrentHealthPoint(unit.MaxHealthPoint);
+        unit.SetCurrentHealthPoint(PlayerPrefs.GetInt($"{unit.unitData.CharacterName} HP", unit.unitData.HealthPoint));
         unit.SetMaxEnergy(unit.unitData.Energy);
-        unit.SetCurrentEnergy(unit.MaxEnergy);
+        unit.SetCurrentEnergy(PlayerPrefs.GetInt($"{unit.unitData.CharacterName} Energy", unit.unitData.Energy));
         unit.SetAttack(unit.unitData.Attack);
         unit.SetDefense(unit.unitData.Defense);
         unit.SetSpeed(unit.unitData.Speed);
@@ -215,7 +215,13 @@ public class BattleSystem : MonoBehaviour
                 UpdateUnitStats(unit);
                 UpdateUnitEnergy(unit);
             }
-                
+
+            Character initializeFirstUnit = turnQueue.FirstOrDefault(x => x.GetComponent<Unit>());
+            if (initializeFirstUnit is Unit)
+            {
+                UpdateUnitStats((Unit)initializeFirstUnit);
+                UpdateUnitEnergy((Unit)initializeFirstUnit);
+            }
         }
     }
 
@@ -284,7 +290,6 @@ public class BattleSystem : MonoBehaviour
             SelectTargetButtons.Add(enemyPosition.transform.GetChild(i).GetComponent<Button>());
     }
 
-
     private IEnumerator StartBattle()
     {
         yield return new WaitForSeconds(1f);
@@ -299,6 +304,7 @@ public class BattleSystem : MonoBehaviour
             {
                 Unit unitCharacter = SetCurrentUnit();
                 Unit unitRef = currentCharacter.GetComponent<Unit>();
+                UpdateUnitStats(unitCharacter);
 
                 if (!unitCharacter.HasMaxEnergy(unitCharacter))
                 {
@@ -411,9 +417,19 @@ public class BattleSystem : MonoBehaviour
         else
         {
             print("You are the chosen one.");
+            StartCoroutine(DestroyLastEnemyAndChangeState());
+            SaveUnitStats();
         }
+    }
 
-        StartCoroutine(DestroyLastEnemyAndChangeState());
+    private void SaveUnitStats()
+    {
+        for (int i = 0; i < unitPosition.transform.childCount; i++)
+        {
+            Unit unit = unitPosition.transform.GetChild(i).GetComponent<Unit>();
+            PlayerPrefs.SetInt($"{unit.CharacterName} HP", unit.CurrentHealthPoint);
+            PlayerPrefs.SetInt($"{unit.CharacterName} Energy", unit.CurrentEnergy);
+        }
     }
 
     private IEnumerator DestroyLastEnemyAndChangeState()
