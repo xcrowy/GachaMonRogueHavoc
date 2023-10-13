@@ -24,9 +24,13 @@ public class Unit : Character
     public Transform GetAbilities { get; private set; }
     #endregion
 
-    public override void Initialize(BattleSystem BattleSystem)
+    #region Battle References
+    public GameObject damageText;
+    #endregion
+
+    public override void Initialize()
     {
-        this.BattleSystem = BattleSystem;
+        BattleSystem = FindObjectOfType<BattleSystem>();
 
         SetLevel(unitData.Level);
         SetCharacterName(unitData.CharacterName);
@@ -39,14 +43,11 @@ public class Unit : Character
         SetSpeed(unitData.Speed);
         SetCritRate(unitData.CritRate);
 
-        // Set Attack and End Turn to non-interactable at the start of combat
         BattleSystem.TogglePlayerChoiceButtonInteractability(false);
         ActionSelected = false;
 
-        // Disable Event Trigger
         BattleSystem.ToggleEventTriggerForTargetSelection(false);
 
-        // Generate Abilities for Unit
         AbilitySet = new();
         foreach (LearnableAbility ability in unitData.LearnableAbilities)
         {
@@ -124,7 +125,12 @@ public class Unit : Character
     public override void TakeDamageFrom(Character character, int abilityDamage)
     {
         float totalDamage = CalculateDamage(character.Attack, abilityDamage, Defense, character.CritRate);
-        print($"Total Damage: {totalDamage}");
+
+        ModifyCurrentHealthPoint(-Mathf.RoundToInt(totalDamage));
+
+        GameObject damageTextInstance = Instantiate(damageText, transform);
+        damageTextInstance.transform.position = new Vector3(damageTextInstance.transform.position.x, damageTextInstance.transform.position.y + 100f);
+        damageTextInstance.GetComponent<DamageText>().ShowDamage(Mathf.RoundToInt(totalDamage));
 
         ModifyCurrentHealthPoint(-Mathf.RoundToInt(totalDamage));
     }

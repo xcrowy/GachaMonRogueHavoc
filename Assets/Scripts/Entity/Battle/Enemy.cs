@@ -17,6 +17,10 @@ public class Enemy : Character
     public List<Ability> AbilitySet { get; private set; }
     #endregion
 
+    #region Battle References
+    public GameObject damageText;
+    #endregion
+
     public override IEnumerator Action()
     {
         yield return AttackUnit();
@@ -26,8 +30,10 @@ public class Enemy : Character
         ActionSelected = false;
     }
 
-    public override void Initialize(BattleSystem BattleSystem)
+    public override void Initialize()
     {
+        BattleSystem = FindObjectOfType<BattleSystem>();
+
         SetCharacterName(enemyData.CharacterName);
         SetLevel(enemyData.Level);
         SetMaxHealthPoint(enemyData.HealthPoint);
@@ -36,8 +42,6 @@ public class Enemy : Character
         SetDefense(enemyData.Defense);
         SetSpeed(enemyData.Speed);
         SetCritRate(enemyData.CritRate);
-
-        this.BattleSystem = BattleSystem;
 
         AbilitySet = new();
         List<Ability> abilityCollection = new();
@@ -70,7 +74,10 @@ public class Enemy : Character
     public override void TakeDamageFrom(Character character, int abilityDamage)
     {
         float totalDamage = CalculateDamage(character.Attack, abilityDamage, Defense, character.CritRate);
-        print($"Total Damage: {totalDamage}");
+
+        GameObject damageTextInstance = Instantiate(damageText, transform);
+        damageTextInstance.transform.position = new Vector3(damageTextInstance.transform.position.x, damageTextInstance.transform.position.y + 100f);
+        damageTextInstance.GetComponent<DamageText>().ShowDamage(Mathf.RoundToInt(totalDamage));
 
         ModifyCurrentHealthPoint(-Mathf.RoundToInt(totalDamage));
     
@@ -96,7 +103,8 @@ public class Enemy : Character
         Ability ability = FindStrongestAbility();
 
         ApplyDamageToUnit(target, ability);
-        BattleSystem.UpdateUnitStats(target);
+        BattleSystem.UpdateUnitHealth(target);
+        BattleSystem.SetUnitStatsInUI(target);
         ActionSelected = true;
 
         while (!ActionSelected)
@@ -122,7 +130,7 @@ public class Enemy : Character
             }
         }
 
-        if (randomChance < 0.5f) // 50% chance of hitting a random unit
+        if (randomChance < 0.5f)
         {
             aliveUnits.Sort((x, y) => y.Defense.CompareTo(x.Defense));
             aliveUnits.Reverse();

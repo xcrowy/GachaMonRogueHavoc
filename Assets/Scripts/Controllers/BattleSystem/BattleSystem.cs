@@ -11,7 +11,7 @@ public class BattleSystem : MonoBehaviour
 {
     #region Unit References
     [Header("Unit")]
-    public VerticalLayoutGroup unitPosition;
+    public GameObject unitPosition;
     #endregion
 
     #region Unit UI References
@@ -21,8 +21,7 @@ public class BattleSystem : MonoBehaviour
 
     #region Enemy References
     [Header("Enemy")]
-    public VerticalLayoutGroup enemyPanel;
-    public VerticalLayoutGroup enemyPosition;
+    public GameObject enemyPosition;
     #endregion
 
     #region Turn-Based References
@@ -82,11 +81,8 @@ public class BattleSystem : MonoBehaviour
 
     private void InitializeCharacters()
     {
-        InitializeHealthPointsSlider();
-        InitializeEnergySlider();
-
         foreach (Character character in Characters)
-            character.Initialize(this);
+            character.Initialize();
 
         RearrangeTurnBasedOnSpeed();
 
@@ -96,16 +92,38 @@ public class BattleSystem : MonoBehaviour
         currentCharacter = turnQueue.Peek();
     }
 
-    private void InitializeHealthPointsSlider() => UnitHealthPointSlider = unitPanel.GetChild(2).GetComponent<Slider>();
+    public void UpdateUnitHealth(Unit unit)
+    {
+        //unitLevel.text = $"Lv. {unit.Level}";
+        //unitName.text = unit.CharacterName;
 
-    private void InitializeEnergySlider() => UnitEnergySlider = unitPanel.GetChild(3).GetComponent<Slider>();
+        TextMeshProUGUI unitHp = unit.transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
+        unitHp.text = $"{unit.CurrentHealthPoint}/{unit.MaxHealthPoint}";
 
-    public void UpdateUnitStats(Unit unit)
+        UnitHealthPointSlider = unit.transform.GetChild(0).GetComponent<Slider>();
+        UnitHealthPointSlider.value = (float)unit.CurrentHealthPoint / (float)unit.MaxHealthPoint;
+        
+        ////Unit Stats
+        //unitHealthPointStat.text = $"HP: {unit.MaxHealthPoint}";
+        //unitAtkStat.text = $"ATK: {unit.Attack}";
+        //unitDefStat.text = $"DEF: {unit.Defense}";
+        //unitSpdStat.text = $"SPD: {unit.Speed}";
+        //unitCritStat.text = $"CRIT: {unit.CritRate}";
+    }
+
+    public void UpdateUnitEnergy(Unit unit)
+    {
+        TextMeshProUGUI unitEnergy = unit.transform.GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>();
+        unitEnergy.text = $"{unit.CurrentEnergy}/{unit.MaxEnergy}";
+
+        UnitEnergySlider = unit.transform.GetChild(1).GetComponent<Slider>();
+        UnitEnergySlider.value = (float)unit.CurrentEnergy / (float)unit.MaxEnergy;
+    }
+
+    public void SetUnitStatsInUI(Unit unit)
     {
         unitLevel.text = $"Lv. {unit.Level}";
         unitName.text = unit.CharacterName;
-        unitHealthPoint.text = $"{unit.CurrentHealthPoint}/{unit.MaxHealthPoint}";
-        UnitHealthPointSlider.value = (float)unit.CurrentHealthPoint / (float)unit.MaxHealthPoint;
         unitHealthPointStat.text = $"HP: {unit.MaxHealthPoint}";
         unitAtkStat.text = $"ATK: {unit.Attack}";
         unitDefStat.text = $"DEF: {unit.Defense}";
@@ -113,21 +131,15 @@ public class BattleSystem : MonoBehaviour
         unitCritStat.text = $"CRIT: {unit.CritRate}";
     }
 
-    public void UpdateUnitEnergy(Unit unit)
+    public void UpdateEnemyStats(Enemy enemy)
     {
-        unitEnergyPoint.text = $"{unit.CurrentEnergy}/{unit.MaxEnergy}";
-        UnitEnergySlider.value = (float)unit.CurrentEnergy / (float)unit.MaxEnergy;
-    }
-
-    public void UpdateEnemyStats(Enemy enemy, int index)
-    {
-        TextMeshProUGUI enemyName = enemyPanel.transform.GetChild(index).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI enemyHp = enemyPanel.transform.GetChild(index).GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI enemyName = enemy.transform.Find("Enemy Name").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI enemyHp = enemy.transform.Find("Enemy Name").GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
 
         enemyName.text = enemy.CharacterName;
         enemyHp.text = $"{enemy.CurrentHealthPoint}/{enemy.MaxHealthPoint}";
 
-        EnemyHealthPointSlider = enemyPanel.transform.GetChild(index).GetChild(0).GetComponent<Slider>();
+        EnemyHealthPointSlider = enemy.transform.GetChild(1).GetChild(0).GetComponent<Slider>();
         EnemyHealthPointSlider.value = (float)enemy.CurrentHealthPoint / (float)enemy.MaxHealthPoint;
     }
 
@@ -170,27 +182,13 @@ public class BattleSystem : MonoBehaviour
             getUnitRef.unitData = findUnit.GetComponent<Unit>().unitData;
 
             SetUnitStats(getUnitRef);
-            UpdateUnitStats(getUnitRef);
+            SetUnitStatsInUI(getUnitRef);
+            UpdateUnitHealth(getUnitRef);
             UpdateUnitEnergy(getUnitRef);
             InitializeUnitSprite(findUnit, unitSpriteRef);
         }
         else
         {
-            switch (PartyController.partyMembers.Count)
-            {
-                case 1:
-                    unitPosition.padding.top = 300;
-                    break;
-                case 2:
-                    unitPosition.padding.top = 220;
-                    break;
-                case 3:
-                case 4:
-                    unitPosition.padding.top = 40;
-                    unitPosition.spacing = -350;
-                    break;
-            }
-
             Unit getUnitRef = unitPosition.transform.GetChild(0).GetComponent<Unit>();
 
             for (int i = 1; i < PartyController.partyMembers.Count; i++)
@@ -212,15 +210,16 @@ public class BattleSystem : MonoBehaviour
             {
                 Unit unit = unitPosition.transform.GetChild(i).GetComponent<Unit>();
                 SetUnitStats(unit);
-                UpdateUnitStats(unit);
+                SetUnitStatsInUI(unit);
+                UpdateUnitHealth(unit);
                 UpdateUnitEnergy(unit);
             }
 
             Character initializeFirstUnit = turnQueue.FirstOrDefault(x => x.GetComponent<Unit>());
+
             if (initializeFirstUnit is Unit)
             {
-                UpdateUnitStats((Unit)initializeFirstUnit);
-                UpdateUnitEnergy((Unit)initializeFirstUnit);
+                SetUnitStatsInUI((Unit)initializeFirstUnit);
             }
         }
     }
@@ -235,35 +234,16 @@ public class BattleSystem : MonoBehaviour
             getEnemyRef.enemyData = findEnemy.GetComponent<Enemy>().enemyData;
 
             SetEnemyStats(getEnemyRef);
-            UpdateEnemyStats(getEnemyRef, 0);
+            UpdateEnemyStats(getEnemyRef);
             InitializeEnemySprite(findEnemy, enemySpriteRef);
         }
         else
         {
-            switch (EnemyPartyController.enemyPartyMembers.Count)
-            {
-                case 1:
-                    enemyPosition.padding.top = 300;
-                    enemyPanel.padding.top = 120;
-                    break;
-                case 2:
-                    enemyPosition.padding.top = 220;
-                    enemyPanel.padding.top = 70;
-                    break;
-                case 3:
-                case 4:
-                    enemyPosition.padding.top = 40;
-                    enemyPanel.padding.top = 20;
-                    break;
-            }
-
             Enemy getEnemyRef = enemyPosition.transform.GetChild(0).GetComponent<Enemy>();
-            GameObject getEnemyTextData = enemyPanel.transform.GetChild(0).gameObject;
 
             for (int i = 1; i < EnemyPartyController.enemyPartyMembers.Count; i++)
             {
                 Instantiate(getEnemyRef, enemyPosition.transform);
-                Instantiate(getEnemyTextData, enemyPanel.transform);
             }
 
             List<Character> findEnemy = Characters.FindAll(x => x.GetComponent<Enemy>());
@@ -280,8 +260,9 @@ public class BattleSystem : MonoBehaviour
 
             for (int i = 0; i < enemyPosition.transform.childCount; i++)
             {
-                SetEnemyStats(enemyPosition.transform.GetChild(i).GetComponent<Enemy>());
-                UpdateEnemyStats(findEnemy[i].GetComponent<Enemy>(), i);
+                Enemy enemy = enemyPosition.transform.GetChild(i).GetComponent<Enemy>();
+                SetEnemyStats(enemy);
+                UpdateEnemyStats(enemy);
             }
                 
         }
@@ -304,7 +285,9 @@ public class BattleSystem : MonoBehaviour
             {
                 Unit unitCharacter = SetCurrentUnit();
                 Unit unitRef = currentCharacter.GetComponent<Unit>();
-                UpdateUnitStats(unitCharacter);
+                SetUnitStatsInUI(unitCharacter);
+                UpdateUnitHealth(unitCharacter);
+                UpdateUnitEnergy(unitCharacter);
 
                 if (!unitCharacter.HasMaxEnergy(unitCharacter))
                 {
@@ -365,7 +348,6 @@ public class BattleSystem : MonoBehaviour
                 turnQueue = new Queue<Character>(turnQueue.Where(x => x.CharacterName != currentUnit.CharacterName));
                 currentUnit.transform.SetParent(null);
                 Destroy(currentUnit.gameObject);
-                UpdateUnitLayoutGrid();
 
                 if (unitPosition.transform.childCount > 0)
                 {
@@ -391,8 +373,6 @@ public class BattleSystem : MonoBehaviour
                 turnQueue = new Queue<Character>(turnQueue.Where(x => x.CharacterName != currentEnemy.CharacterName));
                 currentEnemy.transform.SetParent(null);
                 Destroy(currentEnemy.gameObject);
-                Destroy(enemyPanel.transform.GetChild(i).gameObject);
-                UpdateEnemyLayoutGrid();
 
                 if (enemyPosition.transform.childCount > 0)
                 {
@@ -431,7 +411,6 @@ public class BattleSystem : MonoBehaviour
             PlayerPrefs.SetInt($"{unit.CharacterName} Energy", unit.CurrentEnergy);
         }
     }
-
     private IEnumerator DestroyLastEnemyAndChangeState()
     {
         yield return new WaitForSeconds(2f);
@@ -440,7 +419,6 @@ public class BattleSystem : MonoBehaviour
         Destroy(this.gameObject);
         Player.PlayerStateMachine.ChangeState(Player.IdleState);
     }
-
     public void OnSelectedTarget(Transform target) => SelectedTarget = target;
     public void OnSelectedAbility(Transform ability) => SelectedAbility = ability;
     private void RearrangeTurnBasedOnSpeed() => Characters.Sort((x, y) => y.Speed.CompareTo(x.Speed));
@@ -456,48 +434,10 @@ public class BattleSystem : MonoBehaviour
         return null;
         
     }
-    private void UpdateEnemyLayoutGrid()
-    {
-        switch (enemyPosition.transform.childCount)
-        {
-            case 1:
-                enemyPosition.padding.top = 300;
-                enemyPanel.padding.top = 120;
-                break;
-            case 2:
-                enemyPosition.padding.top = 220;
-                enemyPanel.padding.top = 70;
-                break;
-            case 3:
-            case 4:
-                enemyPosition.padding.top = 40;
-                enemyPanel.padding.top = 20;
-                break;
-        }
-    }
-    private void UpdateUnitLayoutGrid()
-    {
-        switch (unitPosition.transform.childCount)
-        {
-            case 1:
-                unitPosition.padding.top = 300;
-                break;
-            case 2:
-                unitPosition.padding.top = 220;
-                break;
-            case 3:
-            case 4:
-                unitPosition.padding.top = 40;
-                unitPosition.spacing = -350;
-                break;
-        }
-    }
 
     #region Button Event Listener
     private void OnAttack()
     {
-        print("On Attack");
-
         abilityPanelParent.gameObject.SetActive(true);
         for (int i = 0; i < PartyController.partyMembers.Count; i++)
         {
@@ -515,7 +455,6 @@ public class BattleSystem : MonoBehaviour
 
     private void OnEndTurn()
     {
-        print("End Turn");
         if(currentCharacter is Unit)
         {
             ToggleAbilityPanel(false);
@@ -525,7 +464,6 @@ public class BattleSystem : MonoBehaviour
 
     private void OnSelectTarget(Unit unit, Unit unitRef)
     {
-        print("Pick a target");
         int findSelectedTarget = enemyPosition.transform.Find(SelectedTarget.name).GetSiblingIndex();
         ToggleEventTriggerForTargetSelection(false);
 
@@ -538,16 +476,12 @@ public class BattleSystem : MonoBehaviour
 
         target.TakeDamageFrom(unit, unitRef.AbilitySet[findSelectedAbility].AbilityBase.damage);
 
-        EnemyHealthPointSlider = enemyPanel.transform.GetChild(findSelectedTarget).GetChild(0).GetComponent<Slider>();
-        UpdateEnemyStats(target, findSelectedTarget);
+        EnemyHealthPointSlider = target.transform.GetChild(1).GetChild(0).GetComponent<Slider>();
+        UpdateEnemyStats(target);
 
-        print($"Ability Used: {unitRef.AbilitySet[findSelectedAbility].AbilityBase.abilityName}. Energy Cost: {unitRef.AbilitySet[findSelectedAbility].EnergyUsage}.");
         unit.ModifyEnergy(unit, -unitRef.AbilitySet[findSelectedAbility].EnergyUsage);
         UpdateUnitEnergy(unit);
 
-        print($"{unit.CharacterName}'s Energy: {unit.CurrentEnergy}.");
-
-        print($"{unit.CharacterName} attacked {target.CharacterName}. Current Target HP: {target.CurrentHealthPoint}. Damage Taken: {target.MaxHealthPoint - target.CurrentHealthPoint}.");
         unitRef.ActionSelected = true;
 
         attackButton.interactable = true;
@@ -559,7 +493,6 @@ public class BattleSystem : MonoBehaviour
         Unit unit = SetCurrentUnit();
         Unit unitRef = currentCharacter.GetComponent<Unit>();
         int findSelectedAbility = AbilityPanel.transform.Find(SelectedAbility.name).GetSiblingIndex();
-        print($"Ability Selected");
         
         if(unit.HasEnoughEnergy(unit, unitRef, findSelectedAbility))
         {

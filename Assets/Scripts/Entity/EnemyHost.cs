@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class EnemyHost : Entity
 {
@@ -12,7 +13,6 @@ public class EnemyHost : Entity
     #region Player References
     public Player Player { get; set; }
     private PlayerStateMachine playerStateMachine;
-    private PlayerInputHandler inputHandler;
     #endregion
 
     #region Dialogue References
@@ -31,11 +31,9 @@ public class EnemyHost : Entity
             sign.SetActive(true);
             Player = collision.GetComponent<Player>();
             playerStateMachine = Player.PlayerStateMachine;
-            inputHandler = Player.GetComponent<PlayerInputHandler>();
             Player.SetVelocity(0f, 0f);
 
-            //TODO: Fix this -> after one enemyhost, it auto starts dialogue
-            if (inputHandler.InteractInput)
+            if (Keyboard.current[Key.Space].isPressed && playerStateMachine.CurrentState != Player.EncounterState)
             {
                 playerStateMachine.ChangeState(Player.EncounterState);
                 InitializeDialogueController();

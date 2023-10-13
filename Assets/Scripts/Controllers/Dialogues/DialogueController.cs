@@ -107,7 +107,7 @@ public class DialogueController : MonoBehaviour
         BattleSystem battleSystem = battleSystemObject.GetComponent<BattleSystem>();
         battleSystem.Initialize(EnemyHost);
 
-        this.gameObject.SetActive(false);
+        Destroy(this.gameObject);
     }
 
     private void CompleteText()

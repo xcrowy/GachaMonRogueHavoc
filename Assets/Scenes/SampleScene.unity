@@ -5566,6 +5566,7 @@ MonoBehaviour:
     kidding.
   enemyPartyMembers:
   - {fileID: 2926901211473869092, guid: d19f9fd19b9fad54c84cbdb4559d24f9, type: 3}
+  - {fileID: 2926901211473869092, guid: 7ac52407522eca241adc0a88162c3839, type: 3}
 --- !u!1 &1307931712 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3403915912213827445, guid: 27569c7113e776c439996092266f6cdc, type: 3}
@@ -6654,22 +6655,6 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 7e82cf75-07af-4fd1-b4e1-2f25c24e1e70
     m_ActionName: Gameplay/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2076254175}
-        m_TargetAssemblyTypeName: PlayerInputHandler, Assembly-CSharp
-        m_MethodName: OnInteractInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 980d80a8-e85a-45f3-976a-468ef9130e49
-    m_ActionName: Gameplay/Interact[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard
   m_DefaultActionMap: Gameplay
