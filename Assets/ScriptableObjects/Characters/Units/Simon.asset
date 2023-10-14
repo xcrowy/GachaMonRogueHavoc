@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8559fd0ce54dbf1439d48a23f3608746, type: 3}
+  m_Name: Simon
+  m_EditorClassIdentifier: 
+  UpSprite: {fileID: 454842724, guid: fbf7cc3fbc6b4454185e506511222178, type: 3}
+  DownSprite: {fileID: 36764187, guid: fbf7cc3fbc6b4454185e506511222178, type: 3}
+  LeftSprite: {fileID: -910031956, guid: fbf7cc3fbc6b4454185e506511222178, type: 3}
+  RightSprite: {fileID: -1958851634, guid: fbf7cc3fbc6b4454185e506511222178, type: 3}
+  Level: 1
+  CharacterName: Simon
+  HealthPoint: 100
+  Attack: 2
+  Defense: 135
+  Speed: 170
+  CritRate: 0.5
+  Constant: 100
+  Energy: 100
+  EnergyRegen: 20
+  learnableAbilities:
+  - abilityBase: {fileID: 11400000, guid: 4d62ed000a29c214ea20c46cf3065f7c, type: 2}
+    level: 1
