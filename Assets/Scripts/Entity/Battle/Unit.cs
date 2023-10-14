@@ -129,7 +129,7 @@ public class Unit : Character
         ModifyCurrentHealthPoint(-Mathf.RoundToInt(totalDamage));
 
         GameObject damageTextInstance = Instantiate(damageText, transform);
-        damageTextInstance.transform.position = new Vector3(damageTextInstance.transform.position.x, damageTextInstance.transform.position.y + 100f);
+        damageTextInstance.transform.position = new Vector3(damageTextInstance.transform.position.x + 180f, damageTextInstance.transform.position.y + 50f);
         damageTextInstance.GetComponent<DamageText>().ShowDamage(Mathf.RoundToInt(totalDamage));
 
         ModifyCurrentHealthPoint(-Mathf.RoundToInt(totalDamage));

@@ -2,33 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class DamageText : MonoBehaviour
 {
     public TextMeshProUGUI damageText;
-    public float fadeDuration = 1.0f;
-
-    private float elapsedTime;
+    public Color textColor;
+    private float fadeDuration = 1.0f;
+    private float yOffset = 1.0f;
 
     public void ShowDamage(int damage)
     {
         damageText.text = $"-{damage}";
-        damageText.CrossFadeAlpha(1f, 0f, true);
-        elapsedTime = 0f;
+        Vector3 startPos = transform.position;
+        Vector3 endPos = transform.position + new Vector3(0, yOffset, 0);
+        StartCoroutine(MoveText(startPos, endPos));
     }
 
-    private void Update()
+    private IEnumerator MoveText(Vector3 startPos, Vector3 endPos)
     {
-        elapsedTime += Time.deltaTime;
+        float startTime = Time.time;
+        float elapsedTime = 0;
 
-        if(elapsedTime < fadeDuration)
+        while(elapsedTime < fadeDuration)
         {
-            float alpha = 1f - (elapsedTime / fadeDuration);
-            damageText.CrossFadeAlpha(alpha, 0f, true);
+            float time = elapsedTime / fadeDuration;
+            damageText.transform.position = Vector3.Lerp(startPos, endPos, time);
+            damageText.color = new Color(damageText.color.r, damageText.color.g, damageText.color.b, Mathf.Lerp(1, 0, time));
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
-        else
-        {
-            damageText.CrossFadeAlpha(0f, 0f, true);
-        }
+
+        damageText.text = "";
+        damageText.transform.position = startPos;
+        damageText.color = textColor;
+
+        Destroy(this.gameObject);
     }
+
 }
