@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Player
+  - EnemyHost
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Base Ground
+    uniqueID: 142587911
+    locked: 0
+  - name: Mid Ground
+    uniqueID: 3173957887
+    locked: 0
+  - name: High Ground
+    uniqueID: 3299478323
+    locked: 0
+  - name: Decorations
+    uniqueID: 3286670783
+    locked: 0
+  - name: Obstacle
+    uniqueID: 427127151
+    locked: 0
+  - name: Entity
+    uniqueID: 2969239815
+    locked: 0

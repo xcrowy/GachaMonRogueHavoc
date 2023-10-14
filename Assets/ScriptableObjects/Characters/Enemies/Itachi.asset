@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5db25099ed782964bb0d1946d143711b, type: 3}
+  m_Name: Itachi
+  m_EditorClassIdentifier: 
+  UpSprite: {fileID: -1756657970, guid: c715e7ae4f5884d4abc0d1f69cecd7b0, type: 3}
+  DownSprite: {fileID: -1287940698, guid: c715e7ae4f5884d4abc0d1f69cecd7b0, type: 3}
+  LeftSprite: {fileID: 330453509, guid: c715e7ae4f5884d4abc0d1f69cecd7b0, type: 3}
+  RightSprite: {fileID: -165993634, guid: c715e7ae4f5884d4abc0d1f69cecd7b0, type: 3}
+  CharacterName: Itachi
+  HealthPoint: 200
+  Attack: 200
+  Defense: 150
+  Speed: 250
+  CritRate: 0.7
+  Constant: 100
