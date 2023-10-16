@@ -1049,6 +1049,7 @@ MonoBehaviour:
   attackButton: {fileID: 9185353227250190087}
   endButton: {fileID: 1709832418821666330}
   abilityPanelParent: {fileID: 3176907364573384285}
+  levelPanelPrefab: {fileID: 7406524782625415293, guid: 42ea1f836c285054fa1c316cbfce0205, type: 3}
 --- !u!1 &1618030790970671664
 GameObject:
   m_ObjectHideFlags: 0

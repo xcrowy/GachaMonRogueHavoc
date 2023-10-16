@@ -5566,7 +5566,6 @@ MonoBehaviour:
     kidding.
   enemyPartyMembers:
   - {fileID: 2926901211473869092, guid: d19f9fd19b9fad54c84cbdb4559d24f9, type: 3}
-  - {fileID: 2926901211473869092, guid: 7ac52407522eca241adc0a88162c3839, type: 3}
 --- !u!1 &1307931712 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3403915912213827445, guid: 27569c7113e776c439996092266f6cdc, type: 3}

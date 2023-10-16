@@ -6,6 +6,7 @@ using TMPro;
 using System;
 using System.Linq;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class BattleSystem : MonoBehaviour
 {
@@ -49,6 +50,7 @@ public class BattleSystem : MonoBehaviour
     public Button attackButton;
     public Button endButton;
     public Transform abilityPanelParent;
+    public GameObject levelPanelPrefab;
     #endregion
 
     public void Initialize(EnemyHost enemyHost) => this.EnemyHost = enemyHost;
@@ -411,11 +413,33 @@ public class BattleSystem : MonoBehaviour
             PlayerPrefs.SetInt($"{unit.CharacterName} Energy", unit.CurrentEnergy);
         }
     }
+    private IEnumerator LevelRandomizeStats()
+    {
+        GameObject levelSystemObject = Instantiate(levelPanelPrefab, gameObject.transform);
+        LevelSystem levelSystem = levelSystemObject.GetComponent<LevelSystem>();
+
+        for (int i = 0; i < unitPosition.transform.childCount; i++)
+        {
+            Unit unit = unitPosition.transform.GetChild(i).GetComponent<Unit>();
+            levelSystem.SetUnitInformation(unit);
+
+            levelSystem.UpgradeRandomizeStats(unit);
+
+            yield return new WaitUntil(() => Keyboard.current[Key.Space].wasPressedThisFrame);
+        }
+        
+        yield return new WaitUntil(() => Keyboard.current[Key.Space].wasPressedThisFrame);
+        yield return new WaitForSeconds(1f);
+        Destroy(levelSystemObject);
+    }
     private IEnumerator DestroyLastEnemyAndChangeState()
     {
         yield return new WaitForSeconds(2f);
 
         Destroy(EnemyHost.gameObject);
+
+        yield return LevelRandomizeStats();
+        
         Destroy(this.gameObject);
         Player.PlayerStateMachine.ChangeState(Player.IdleState);
     }

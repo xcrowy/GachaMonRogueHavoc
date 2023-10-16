@@ -18,7 +18,7 @@ MonoBehaviour:
   RightSprite: {fileID: 833348516, guid: 89fd87ecb545ae04aaf8fdd86cfc6086, type: 3}
   Level: 1
   CharacterName: Bunny Girl Senpai
-  HealthPoint: 70
+  HealthPoint: 20
   Attack: 5
   Defense: 150
   Speed: 150
