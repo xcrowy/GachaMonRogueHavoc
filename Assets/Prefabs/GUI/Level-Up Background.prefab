@@ -1436,7 +1436,7 @@ MonoBehaviour:
   unitSpeed: {fileID: 1081635124583476747}
   unitCrit: {fileID: 2126258357756518696}
   upgradeColor: {r: 0.504717, g: 1, b: 0.6375972, a: 1}
-  originalColor: {r: 1, g: 0.41037738, b: 0.41037738, a: 1}
+  originalColor: {r: 1, g: 0, b: 0.050980393, a: 1}
 --- !u!1 &8108424171813091895
 GameObject:
   m_ObjectHideFlags: 0

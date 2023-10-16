@@ -18,7 +18,7 @@ MonoBehaviour:
   RightSprite: {fileID: -783980487, guid: 8d24180679583f841ba53bf2813f98c1, type: 3}
   Level: 1
   CharacterName: Ishida Uryuu
-  HealthPoint: 70
+  HealthPoint: 10
   Attack: 5
   Defense: 150
   Speed: 250

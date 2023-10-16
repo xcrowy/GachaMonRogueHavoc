@@ -126,8 +126,6 @@ public class Unit : Character
     {
         float totalDamage = CalculateDamage(character.Attack, abilityDamage, Defense, character.CritRate);
 
-        ModifyCurrentHealthPoint(-Mathf.RoundToInt(totalDamage));
-
         GameObject damageTextInstance = Instantiate(damageText, transform);
         damageTextInstance.transform.position = new Vector3(damageTextInstance.transform.position.x + 180f, damageTextInstance.transform.position.y + 50f);
         damageTextInstance.GetComponent<DamageText>().ShowDamage(Mathf.RoundToInt(totalDamage));

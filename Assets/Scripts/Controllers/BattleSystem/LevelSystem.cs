@@ -24,27 +24,29 @@ public class LevelSystem : MonoBehaviour
 
     public void SetUnitInformation(Unit unit)
     {
-        unitLevel.text = $"LVL. {unit.Level}";
+        unitLevel.text = $"LVL. {PlayerPrefs.GetInt($"{unit.CharacterName} Level", unit.Level)}";
         unitName.text = unit.CharacterName;
         unitSprite.sprite = unit.unitData.DownSprite;
-        unitHealth.text = $"HP: {unit.MaxHealthPoint}";
-        unitAttack.text = $"ATK: {unit.Attack}";
-        unitDefense.text = $"DEF: {unit.Defense}";
-        unitSpeed.text = $"SPD: {unit.Speed}";
-        unitCrit.text = $"CRIT: {unit.CritRate}";
+        unitHealth.text = $"HP: {PlayerPrefs.GetInt($"{unit.CharacterName} Max HP", unit.MaxHealthPoint)}";
+        unitAttack.text = $"ATK: {PlayerPrefs.GetInt($"{unit.CharacterName} Atk", unit.Attack)}";
+        unitDefense.text = $"DEF: {PlayerPrefs.GetInt($"{unit.CharacterName} Def", unit.Defense)}";
+        unitSpeed.text = $"SPD: {PlayerPrefs.GetInt($"{unit.CharacterName} Spd", unit.Speed)}";
+        unitCrit.text = $"CRIT: {PlayerPrefs.GetFloat($"{unit.CharacterName} Crit", unit.CritRate)}";
 
         LevelUp(unit);
     }
 
     public void LevelUp(Unit unit)
     {
-        unitLevel.text = $"LVL. {unit.Level} + 1";
+        unitLevel.text = $"LV. {unit.Level} + 1";
         unitLevel.color = upgradeColor;
         unit.SetLevel(unit.Level + 1);
+        PlayerPrefs.SetInt($"{unit.CharacterName} Level", unit.Level);
     }
 
     public void UpgradeRandomizeStats(Unit unit)
     {
+        ResetUpgradeTextColor();
         int maxStatsToUpgrade = Random.Range(1, 6);
         List<int> statsIndex = new List<int> { 0, 1, 2, 3, 4 };
         int statsUpgraded = 0;
@@ -56,38 +58,52 @@ public class LevelSystem : MonoBehaviour
 
             int statIncrease = Random.Range(1, 6);
 
-            //TODO: Save Stats
             switch (stat)
             {
                 case 0: 
                     unitHealth.text = $"HP: {unit.MaxHealthPoint} + {statIncrease}";
                     unitHealth.color = upgradeColor;
+                    PlayerPrefs.SetInt($"{unit.CharacterName} Old Max HP", unit.MaxHealthPoint);
                     unit.SetMaxHealthPoint(unit.MaxHealthPoint + statIncrease);
+                    PlayerPrefs.SetInt($"{unit.CharacterName} Max HP", unit.MaxHealthPoint);
                     break;
                 case 1:
                     unitAttack.text = $"ATK: {unit.Attack} + {statIncrease}";
                     unitAttack.color = upgradeColor;
                     unit.SetAttack(unit.Attack + statIncrease);
+                    PlayerPrefs.SetInt($"{unit.CharacterName} Atk", unit.Attack);
                     break;
                 case 2:
                     unitDefense.text = $"DEF: {unit.Defense} + {statIncrease}";
                     unitDefense.color = upgradeColor;
                     unit.SetDefense(unit.Defense + statIncrease);
+                    PlayerPrefs.SetInt($"{unit.CharacterName} Def", unit.Defense);
                     break;
                 case 3:
                     unitSpeed.text = $"SPD: {unit.Speed} + {statIncrease}";
                     unitSpeed.color = upgradeColor;
                     unit.SetSpeed(unit.Speed + statIncrease);
+                    PlayerPrefs.SetInt($"{unit.CharacterName} Spd", unit.Speed);
                     break;
                 case 4:
                     unitCrit.text = $"CRIT: {unit.CritRate:F2} + {statIncrease / 100f}";
                     unitCrit.color = upgradeColor;
                     unit.SetCritRate(unit.CritRate + (statIncrease / 100f));
+                    PlayerPrefs.SetFloat($"{unit.CharacterName} Crit", unit.CritRate);
                     break;
             }
 
             statsIndex.RemoveAt(randomIndex);
             statsUpgraded++;
         }
+    }
+
+    public void ResetUpgradeTextColor()
+    {
+        unitHealth.color = originalColor;
+        unitAttack.color = originalColor;
+        unitDefense.color = originalColor;
+        unitSpeed.color = originalColor;
+        unitCrit.color = originalColor;
     }
 }

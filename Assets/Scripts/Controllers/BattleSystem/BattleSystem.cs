@@ -45,6 +45,16 @@ public class BattleSystem : MonoBehaviour
     public GameObject AbilityPanel { get; private set; }
     #endregion
 
+    #region Unit Stats (Getters/Setters)
+    public int Level { get; private set; }
+    public int MaxHp { get; private set; }
+    public int CurrentHp { get; private set; }
+    public int Attack { get; private set; }
+    public int Defense { get; private set; }
+    public int Speed { get; private set; }
+    public float CritRate { get; private set; }
+    #endregion
+
     #region Battle UI References
     [Header("Battle Options")]
     public Button attackButton;
@@ -96,21 +106,11 @@ public class BattleSystem : MonoBehaviour
 
     public void UpdateUnitHealth(Unit unit)
     {
-        //unitLevel.text = $"Lv. {unit.Level}";
-        //unitName.text = unit.CharacterName;
-
         TextMeshProUGUI unitHp = unit.transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
         unitHp.text = $"{unit.CurrentHealthPoint}/{unit.MaxHealthPoint}";
 
         UnitHealthPointSlider = unit.transform.GetChild(0).GetComponent<Slider>();
         UnitHealthPointSlider.value = (float)unit.CurrentHealthPoint / (float)unit.MaxHealthPoint;
-        
-        ////Unit Stats
-        //unitHealthPointStat.text = $"HP: {unit.MaxHealthPoint}";
-        //unitAtkStat.text = $"ATK: {unit.Attack}";
-        //unitDefStat.text = $"DEF: {unit.Defense}";
-        //unitSpdStat.text = $"SPD: {unit.Speed}";
-        //unitCritStat.text = $"CRIT: {unit.CritRate}";
     }
 
     public void UpdateUnitEnergy(Unit unit)
@@ -124,13 +124,15 @@ public class BattleSystem : MonoBehaviour
 
     public void SetUnitStatsInUI(Unit unit)
     {
-        unitLevel.text = $"Lv. {unit.Level}";
+        SetUnitStatsIfExist(unit);
+
+        unitLevel.text = $"Lv. {Level}";
         unitName.text = unit.CharacterName;
-        unitHealthPointStat.text = $"HP: {unit.MaxHealthPoint}";
-        unitAtkStat.text = $"ATK: {unit.Attack}";
-        unitDefStat.text = $"DEF: {unit.Defense}";
-        unitSpdStat.text = $"SPD: {unit.Speed}";
-        unitCritStat.text = $"CRIT: {unit.CritRate}";
+        unitHealthPointStat.text = $"HP: {MaxHp}";
+        unitAtkStat.text = $"ATK: {Attack}";
+        unitDefStat.text = $"DEF: {Defense}";
+        unitSpdStat.text = $"SPD: {Speed}";
+        unitCritStat.text = $"CRIT: {CritRate}";
     }
 
     public void UpdateEnemyStats(Enemy enemy)
@@ -151,16 +153,31 @@ public class BattleSystem : MonoBehaviour
 
     private void SetUnitStats(Unit unit)
     {
-        unit.SetLevel(unit.unitData.Level);
         unit.SetCharacterName(unit.unitData.CharacterName);
-        unit.SetMaxHealthPoint(unit.unitData.HealthPoint);
-        unit.SetCurrentHealthPoint(PlayerPrefs.GetInt($"{unit.unitData.CharacterName} HP", unit.unitData.HealthPoint));
+        
+        SetUnitStatsIfExist(unit, unit.unitData);
+
+        unit.SetLevel(Level);
+        unit.SetMaxHealthPoint(MaxHp);
+
+        if (PlayerPrefs.GetInt($"{unit.CharacterName} Old Max HP") == PlayerPrefs.GetInt($"{unit.CharacterName} HP"))
+        {
+            CurrentHp = PlayerPrefs.GetInt($"{unit.CharacterName} Max HP", unit.MaxHealthPoint);
+        }
+        else
+        {
+            CurrentHp = PlayerPrefs.GetInt($"{unit.CharacterName} HP", unit.MaxHealthPoint);
+        }
+
+        unit.SetCurrentHealthPoint(CurrentHp);
+        
         unit.SetMaxEnergy(unit.unitData.Energy);
-        unit.SetCurrentEnergy(PlayerPrefs.GetInt($"{unit.unitData.CharacterName} Energy", unit.unitData.Energy));
-        unit.SetAttack(unit.unitData.Attack);
-        unit.SetDefense(unit.unitData.Defense);
-        unit.SetSpeed(unit.unitData.Speed);
-        unit.SetCritRate(unit.unitData.CritRate);
+        unit.SetCurrentEnergy(PlayerPrefs.GetInt($"{unit.CharacterName} Energy", unit.MaxEnergy));
+        
+        unit.SetAttack(Attack);
+        unit.SetDefense(Defense);
+        unit.SetSpeed(Speed);
+        unit.SetCritRate(CritRate);
     }
 
     private void SetEnemyStats(Enemy enemy)
@@ -172,6 +189,28 @@ public class BattleSystem : MonoBehaviour
         enemy.SetDefense(enemy.enemyData.Defense);
         enemy.SetSpeed(enemy.enemyData.Speed);
         enemy.SetCritRate(enemy.enemyData.CritRate);
+    }
+
+    private void SetUnitStatsIfExist(Unit unit, UnitData unitData = null)
+    {
+        if (unitData)
+        {
+            Level = PlayerPrefs.GetInt($"{unit.CharacterName} Level", unitData.Level);
+            MaxHp = PlayerPrefs.GetInt($"{unit.CharacterName} Max HP", unitData.HealthPoint);
+            Attack = PlayerPrefs.GetInt($"{unit.CharacterName} Atk", unitData.Attack);
+            Defense = PlayerPrefs.GetInt($"{unit.CharacterName} Def", unitData.Defense);
+            Speed = PlayerPrefs.GetInt($"{unit.CharacterName} Spd", unitData.Speed);
+            CritRate = PlayerPrefs.GetFloat($"{unit.CharacterName} Crit", unitData.CritRate);
+        }
+        else
+        {
+            Level = PlayerPrefs.GetInt($"{unit.CharacterName} Level", unit.Level);
+            MaxHp = PlayerPrefs.GetInt($"{unit.CharacterName} Max HP", unit.MaxHealthPoint);
+            Attack = PlayerPrefs.GetInt($"{unit.CharacterName} Atk", unit.Attack);
+            Defense = PlayerPrefs.GetInt($"{unit.CharacterName} Def", unit.Defense);
+            Speed = PlayerPrefs.GetInt($"{unit.CharacterName} Spd", unit.Speed);
+            CritRate = PlayerPrefs.GetFloat($"{unit.CharacterName} Crit", unit.CritRate);
+        }
     }
 
     private void SetupUnitsInBattle()
@@ -427,7 +466,6 @@ public class BattleSystem : MonoBehaviour
 
             yield return new WaitUntil(() => Keyboard.current[Key.Space].wasPressedThisFrame);
         }
-        
         yield return new WaitUntil(() => Keyboard.current[Key.Space].wasPressedThisFrame);
         yield return new WaitForSeconds(1f);
         Destroy(levelSystemObject);
