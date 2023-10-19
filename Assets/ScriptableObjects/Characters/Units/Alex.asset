@@ -30,7 +30,9 @@ MonoBehaviour:
     level: 1
   - abilityBase: {fileID: 11400000, guid: ba685cec54460384684142caca228eae, type: 2}
     level: 1
-  - abilityBase: {fileID: 11400000, guid: 4d62ed000a29c214ea20c46cf3065f7c, type: 2}
-    level: 1
   - abilityBase: {fileID: 11400000, guid: 7983275b74c07ae40ad1e2bb9df5c009, type: 2}
     level: 1
+  - abilityBase: {fileID: 11400000, guid: 4d62ed000a29c214ea20c46cf3065f7c, type: 2}
+    level: 1
+  - abilityBase: {fileID: 11400000, guid: a406091cf8736c044a5b9fe1dc5f1916, type: 2}
+    level: 2

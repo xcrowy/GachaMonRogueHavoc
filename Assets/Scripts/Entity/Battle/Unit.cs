@@ -32,8 +32,8 @@ public class Unit : Character
     {
         BattleSystem = FindObjectOfType<BattleSystem>();
 
-        SetLevel(unitData.Level);
         SetCharacterName(unitData.CharacterName);
+        SetLevel(PlayerPrefs.GetInt($"{CharacterName} Level", unitData.Level));
         SetMaxHealthPoint(unitData.HealthPoint);
         SetCurrentHealthPoint(unitData.HealthPoint);
         SetMaxEnergy(unitData.Energy);
@@ -49,6 +49,7 @@ public class Unit : Character
         BattleSystem.ToggleEventTriggerForTargetSelection(false);
 
         AbilitySet = new();
+
         foreach (LearnableAbility ability in unitData.LearnableAbilities)
         {
             if (ability.Level <= Level)

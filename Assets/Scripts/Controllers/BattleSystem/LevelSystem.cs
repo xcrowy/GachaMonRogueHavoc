@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class LevelSystem : MonoBehaviour
 {
     #region UI References
+    [Header("Unit Stat References")]
     public TextMeshProUGUI unitLevel;
     public TextMeshProUGUI unitName;
     public Image unitSprite;
@@ -18,11 +19,17 @@ public class LevelSystem : MonoBehaviour
     #endregion
 
     #region Color References
+    [Header("Color References")]
     public Color upgradeColor;
     public Color originalColor;
     #endregion
 
-    public void SetUnitInformation(Unit unit)
+    #region New Ability System
+    [Header("Prefab References")]
+    public GameObject learnNewAbilityPrefab;
+    #endregion
+
+    public void SetUnitInformation(Unit unit, List<Ability> abilities = null)
     {
         unitLevel.text = $"LVL. {PlayerPrefs.GetInt($"{unit.CharacterName} Level", unit.Level)}";
         unitName.text = unit.CharacterName;
@@ -33,15 +40,34 @@ public class LevelSystem : MonoBehaviour
         unitSpeed.text = $"SPD: {PlayerPrefs.GetInt($"{unit.CharacterName} Spd", unit.Speed)}";
         unitCrit.text = $"CRIT: {PlayerPrefs.GetFloat($"{unit.CharacterName} Crit", unit.CritRate)}";
 
-        LevelUp(unit);
+        LevelUp(unit, abilities);
     }
 
-    public void LevelUp(Unit unit)
+    public void LevelUp(Unit unit, List<Ability> abilities = null)
     {
         unitLevel.text = $"LV. {unit.Level} + 1";
         unitLevel.color = upgradeColor;
         unit.SetLevel(unit.Level + 1);
         PlayerPrefs.SetInt($"{unit.CharacterName} Level", unit.Level);
+
+        foreach (LearnableAbility ability in unit.unitData.LearnableAbilities)
+        {
+            if (ability.Level == unit.Level)
+            {
+                GameObject learnNewAbilityObject = Instantiate(learnNewAbilityPrefab, transform);
+                NewAbilitySystem newAbilitySystem = learnNewAbilityObject.GetComponent<NewAbilitySystem>();
+                newAbilitySystem.SetUnitInfo(unit);
+
+                if (abilities.Count < 4)
+                {
+                    newAbilitySystem.LearnableAbilityForUnit(unit, ability);
+                }
+                else
+                {
+                    newAbilitySystem.SetExistingAbilityInfo(abilities);
+                }
+            }            
+        }
     }
 
     public void UpgradeRandomizeStats(Unit unit)

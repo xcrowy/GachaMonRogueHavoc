@@ -371,7 +371,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: LVL. 1
+  m_text: LV. 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 06653c042c56369488d15a3a87d7d079, type: 2}
   m_sharedMaterial: {fileID: -6309817917760151896, guid: 06653c042c56369488d15a3a87d7d079, type: 2}
@@ -1437,6 +1437,7 @@ MonoBehaviour:
   unitCrit: {fileID: 2126258357756518696}
   upgradeColor: {r: 0.504717, g: 1, b: 0.6375972, a: 1}
   originalColor: {r: 1, g: 0, b: 0.050980393, a: 1}
+  learnNewAbilityPrefab: {fileID: 4847792479135938458, guid: a426c0f58db68f34e82f4b2389564d61, type: 3}
 --- !u!1 &8108424171813091895
 GameObject:
   m_ObjectHideFlags: 0

@@ -460,7 +460,11 @@ public class BattleSystem : MonoBehaviour
         for (int i = 0; i < unitPosition.transform.childCount; i++)
         {
             Unit unit = unitPosition.transform.GetChild(i).GetComponent<Unit>();
-            levelSystem.SetUnitInformation(unit);
+            Unit unitChar = (Unit)Characters.Find(x => x.CharacterName == unit.CharacterName);
+
+            List<Ability> abilitySet = unitChar.AbilitySet;
+
+            levelSystem.SetUnitInformation(unit, abilitySet);
 
             levelSystem.UpgradeRandomizeStats(unit);
 
