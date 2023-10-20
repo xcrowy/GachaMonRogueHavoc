@@ -89,13 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitData: {fileID: 11400000, guid: 5fcff6eb83a4c244996cb49bdd4b68d3, type: 2}
-  unitName: {fileID: 0}
-  unitHealthPoint: {fileID: 0}
-  unitEnergyPoint: {fileID: 0}
-  unitHealthPointStat: {fileID: 0}
-  unitAtkStat: {fileID: 0}
-  unitDefStat: {fileID: 0}
-  unitSpdStat: {fileID: 0}
-  unitCritStat: {fileID: 0}
+  originalUnitData: {fileID: 11400000, guid: 76d4064df08ef2d4a80226a1fcab87df, type: 2}
   inCollection: 1
   inParty: 0
+  damageText: {fileID: 0}

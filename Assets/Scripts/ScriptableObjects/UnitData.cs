@@ -9,7 +9,11 @@ public class UnitData : CharacterData
     public int EnergyRegen;
 
     [SerializeField] List<LearnableAbility> learnableAbilities;
-    public List<LearnableAbility> LearnableAbilities => learnableAbilities;
+    public List<LearnableAbility> LearnableAbilities
+    {
+        get => learnableAbilities;
+        set => learnableAbilities = value;
+    }
 }
 
 [System.Serializable]

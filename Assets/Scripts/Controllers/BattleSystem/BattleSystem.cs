@@ -464,7 +464,7 @@ public class BattleSystem : MonoBehaviour
 
             List<Ability> abilitySet = unitChar.AbilitySet;
 
-            levelSystem.SetUnitInformation(unit, abilitySet);
+            levelSystem.SetUnitInformation(unit, abilitySet, unitChar);
 
             levelSystem.UpgradeRandomizeStats(unit);
 

@@ -29,7 +29,7 @@ public class LevelSystem : MonoBehaviour
     public GameObject learnNewAbilityPrefab;
     #endregion
 
-    public void SetUnitInformation(Unit unit, List<Ability> abilities = null)
+    public void SetUnitInformation(Unit unit, List<Ability> abilities = null, Unit unitChar = null)
     {
         unitLevel.text = $"LVL. {PlayerPrefs.GetInt($"{unit.CharacterName} Level", unit.Level)}";
         unitName.text = unit.CharacterName;
@@ -40,10 +40,10 @@ public class LevelSystem : MonoBehaviour
         unitSpeed.text = $"SPD: {PlayerPrefs.GetInt($"{unit.CharacterName} Spd", unit.Speed)}";
         unitCrit.text = $"CRIT: {PlayerPrefs.GetFloat($"{unit.CharacterName} Crit", unit.CritRate)}";
 
-        LevelUp(unit, abilities);
+        LevelUp(unit, abilities, unitChar);
     }
 
-    public void LevelUp(Unit unit, List<Ability> abilities = null)
+    public void LevelUp(Unit unit, List<Ability> abilities = null, Unit unitChar = null)
     {
         unitLevel.text = $"LV. {unit.Level} + 1";
         unitLevel.color = upgradeColor;
@@ -64,7 +64,12 @@ public class LevelSystem : MonoBehaviour
                 }
                 else
                 {
+                    newAbilitySystem.SetNewAbilityInfoWhenAbilitySetIsFull(ability);
                     newAbilitySystem.SetExistingAbilityInfo(abilities);
+                    for (int i = 0; i < newAbilitySystem.existingAbilities.Count; i++)
+                    {
+                        newAbilitySystem.existingAbilities[i].onClick.AddListener(delegate { newAbilitySystem.OnClickExistingAbility(unitChar, ability); });
+                    }
                 }
             }            
         }

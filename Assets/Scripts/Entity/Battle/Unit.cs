@@ -10,6 +10,7 @@ public class Unit : Character
 {
     #region Data Reference
     public UnitData unitData;
+    public UnitData originalUnitData;
     #endregion
 
     #region Collection/Party References
@@ -49,6 +50,9 @@ public class Unit : Character
         BattleSystem.ToggleEventTriggerForTargetSelection(false);
 
         AbilitySet = new();
+
+        //On Run Reset:
+        //unitData.LearnableAbilities = originalUnitData.LearnableAbilities.ToList();
 
         foreach (LearnableAbility ability in unitData.LearnableAbilities)
         {
